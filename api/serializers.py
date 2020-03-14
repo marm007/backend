@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from api.models import User, UserProfile, Photo
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -24,8 +23,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         user.set_password(password)
         user.save()
         UserProfile.objects.create(user=user, **profile_data)
-        print("dauser")
-        print(user)
         return user
 
     def update(self, instance, validated_data):
@@ -46,12 +43,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ('user_id', 'image', 'name')
+        fields = ('id', 'user_id', 'image')
 
     def create(self, validated_data):
-        print("dauseadaddr")
-        print(validated_data)
-
         photo = Photo(**validated_data)
         photo.save()
         return photo

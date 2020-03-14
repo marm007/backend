@@ -38,7 +38,6 @@ class Comment(models.Model):
 class Photo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
     image = models.FileField(upload_to='images')
-    name = models.CharField(max_length=250, default="")
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

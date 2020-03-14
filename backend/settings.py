@@ -93,9 +93,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend-insta',
+        'NAME': 'backend-insta-test',
         'USER': 'root',
-        'PASSWORD': "",
+        'PASSWORD': "your_password",
         'HOST': "",
         'PORT': "",
         'OPTIONS': {
