@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import User, UserProfile, Photo
+from api.models import User, UserProfile, Photo, Comment, Like, Album
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -8,12 +8,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields = ('photo',)
 
 
+class LikeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Like
+        fields = ('photo_id',)
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    profile = UserProfileSerializer(required=True)
+    profile = UserProfileSerializer()
+    liked = LikeSerializer(many=True)
 
     class Meta:
         model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'profile')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'profile', 'liked')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -43,9 +50,43 @@ class PhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Photo
-        fields = ('id', 'user_id', 'image')
+        fields = ('id', 'user_id', 'image', 'description', 'likes')
 
     def create(self, validated_data):
         photo = Photo(**validated_data)
         photo.save()
         return photo
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+    photo_id = serializers.IntegerField()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'user_id', 'photo_id', 'body', 'author_name')
+
+    def create(self, validated_data):
+        comment = Comment(**validated_data)
+        comment.save()
+        return comment
+
+
+class AlbumSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+
+    class Meta:
+        model = Album
+        fields = ('id', 'user_id', 'name', 'photos')
+
+    def create(self, validated_data):
+        album = Album(**validated_data)
+        album.save()
+        return album
+
+    def update(self, instance, validated_data):
+        album = instance
+        if self.partial:
+            album.photos.add(*validated_data.get('photos'))
+            album.save()
+        return album

@@ -5,7 +5,7 @@ from django.conf import settings
 
 
 class User(AbstractUser):
-    username = models.CharField(blank=True, null=True, max_length=25)
+    username = models.CharField(max_length=25)
     email = models.EmailField(_('email address'), unique=True)
 
     USERNAME_FIELD = 'email'
@@ -21,9 +21,26 @@ class UserProfile(models.Model):
     photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
 
 
+class Album(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='album')
+    photos = models.ManyToManyField('Photo')
+
+
+class Photo(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
+    image = models.FileField(upload_to='images')
+    description = models.TextField()
+    likes = models.IntegerField(default=0)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='comments')
     body = models.TextField()
+    author_name = models.CharField(max_length=250)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     active = models.BooleanField(default=True)
@@ -35,10 +52,11 @@ class Comment(models.Model):
         return self.user
 
 
-class Photo(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
-    image = models.FileField(upload_to='images')
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked')
+    photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='liked')
 
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
+    class Meta:
+        unique_together = ('user', 'photo',)
+
 
