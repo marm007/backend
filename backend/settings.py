@@ -95,7 +95,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'backend-insta',
         'USER': 'root',
-        'PASSWORD': "your_password",
+        'PASSWORD': "",
         'HOST': "",
         'PORT': "",
         'OPTIONS': {

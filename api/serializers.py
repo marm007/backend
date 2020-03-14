@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('title', 'dob', 'address', 'country', 'city', 'zip', 'photo')
+        fields = ('photo',)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,7 +14,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('url', 'email', 'first_name', 'last_name', 'password', 'profile')
+        fields = ('id', 'email', 'first_name', 'last_name', 'password', 'profile')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -35,12 +35,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         instance.email = validated_data.get('email', instance.email)
         instance.save()
 
-        profile.title = profile_data.get('title', profile.title)
-        profile.dob = profile_data.get('dob', profile.dob)
-        profile.address = profile_data.get('address', profile.address)
-        profile.country = profile_data.get('country', profile.country)
-        profile.city = profile_data.get('city', profile.city)
-        profile.zip = profile_data.get('zip', profile.zip)
         profile.photo = profile_data.get('photo', profile.photo)
         profile.save()
 
@@ -48,8 +42,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PhotoSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
 
     class Meta:
         model = Photo
-        fields = ('image', 'name')
+        fields = ('user_id', 'image', 'name')
 
+    def create(self, validated_data):
+        print("dauseadaddr")
+        print(validated_data)
+
+        photo = Photo(**validated_data)
+        photo.save()
+        return photo
