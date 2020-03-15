@@ -31,6 +31,12 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'api.User'
 
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'appfoto375@gmail.com'
+EMAIL_HOST_PASSWORD = 'janeczek12'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 # Application defiadadnition
 
 INSTALLED_APPS = [
@@ -93,9 +99,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend-insta-test',
+        'NAME': 'backend-insta-test-test',
         'USER': 'root',
-        'PASSWORD': "your_password",
+        'PASSWORD': "",
         'HOST': "",
         'PORT': "",
         'OPTIONS': {
@@ -136,7 +142,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

@@ -42,8 +42,14 @@ class CommentFilter(django_filters.FilterSet):
 
 
 class CommentList(generics.ListAPIView):
-    permission_classes = (AllowAny, )
-    queryset = Comment.objects.all()
+
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        photo_id = self.kwargs.get('photo_id')
+        print(photo_id)
+        return Comment.objects.filter(photo=photo_id)
+
     serializer_class = CommentSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = CommentFilter

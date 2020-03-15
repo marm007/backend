@@ -9,14 +9,39 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+    photo_id = serializers.IntegerField()
+
     class Meta:
         model = Like
-        fields = ('photo_id',)
+        fields = ('id', 'photo_id', 'user_id')
+
+
+class LikeSerializerUser(serializers.ModelSerializer):
+    photo_id = serializers.IntegerField()
+
+    class Meta:
+        model = Like
+        fields = ('id', 'photo_id')
+
+
+class LikeSerializerPhoto(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+
+    class Meta:
+        model = Like
+        fields = ('id', 'user_id')
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('email', )
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     profile = UserProfileSerializer()
-    liked = LikeSerializer(many=True)
+    liked = LikeSerializerUser(many=True, required=False)
 
     class Meta:
         model = User
@@ -45,12 +70,41 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
 
-class PhotoSerializer(serializers.ModelSerializer):
+class AlbumSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
 
     class Meta:
+        model = Album
+        fields = ('id', 'user_id', 'name', 'photos')
+
+    def create(self, validated_data):
+        album = Album(**validated_data)
+        album.save()
+        return album
+
+    def update(self, instance, validated_data):
+        album = instance
+        if self.partial:
+            album.photos.add(*validated_data.get('photos'))
+            album.save()
+        return album
+
+
+class AlbumSerializerPhotos(serializers.ModelSerializer):
+
+    class Meta:
+        model = Album
+        fields = ('id', 'name')
+
+
+class PhotoSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+    album_set = AlbumSerializerPhotos(many=True, required=False)
+    liked = LikeSerializerPhoto(many=True, required=False)
+
+    class Meta:
         model = Photo
-        fields = ('id', 'user_id', 'image', 'description', 'likes')
+        fields = ('id', 'user_id', 'image', 'description', 'likes', 'album_set', 'liked')
 
     def create(self, validated_data):
         photo = Photo(**validated_data)
@@ -72,21 +126,3 @@ class CommentSerializer(serializers.ModelSerializer):
         return comment
 
 
-class AlbumSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField()
-
-    class Meta:
-        model = Album
-        fields = ('id', 'user_id', 'name', 'photos')
-
-    def create(self, validated_data):
-        album = Album(**validated_data)
-        album.save()
-        return album
-
-    def update(self, instance, validated_data):
-        album = instance
-        if self.partial:
-            album.photos.add(*validated_data.get('photos'))
-            album.save()
-        return album

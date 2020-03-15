@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
@@ -19,12 +21,8 @@ class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='profile')
     photo = models.ImageField(upload_to='users/%Y/%m/%d', blank=True)
-
-
-class Album(models.Model):
-    name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='album')
-    photos = models.ManyToManyField('Photo')
+    reset_password_token = models.SlugField(max_length=250, blank=True, default='')
+    reset_password_expires = models.DateTimeField(blank=True, default=datetime.now)
 
 
 class Photo(models.Model):
@@ -34,6 +32,12 @@ class Photo(models.Model):
     likes = models.IntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+
+
+class Album(models.Model):
+    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='album')
+    photos = models.ManyToManyField('Photo', blank=True)
 
 
 class Comment(models.Model):
