@@ -70,6 +70,14 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
 
+class UserPhotoSerializer(serializers.HyperlinkedModelSerializer):
+    profile = UserProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ('username', 'profile')
+
+
 class AlbumSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
 
@@ -110,6 +118,15 @@ class PhotoSerializer(serializers.ModelSerializer):
         photo = Photo(**validated_data)
         photo.save()
         return photo
+
+
+class PhotoUserSerializer(serializers.ModelSerializer):
+    user = UserPhotoSerializer()
+    liked = LikeSerializerPhoto(many=True, required=False)
+
+    class Meta:
+        model = Photo
+        fields = ('id', 'user', 'image', 'description', 'likes', 'liked')
 
 
 class CommentSerializer(serializers.ModelSerializer):

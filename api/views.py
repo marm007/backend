@@ -1,5 +1,4 @@
-import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -139,6 +138,12 @@ class PhotoViewSet(viewsets.ModelViewSet):
             return Response(json_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        serializer = PhotoUserSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -152,8 +157,8 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer = CommentSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            json = serializer.data
-            return Response(json, status=status.HTTP_201_CREATED)
+            json_data = serializer.data
+            return Response(json_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def list(self, request, *args, **kwargs):

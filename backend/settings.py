@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
@@ -69,6 +71,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://localhost:8080',
+    'http://localhost:4200',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -99,9 +102,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend-insta-test-test',
+        'NAME': 'photo-app',
         'USER': 'root',
-        'PASSWORD': "",
+        'PASSWORD': 'your_password',
         'HOST': "",
         'PORT': "",
         'OPTIONS': {
