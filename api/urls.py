@@ -27,9 +27,10 @@ router.register(r'albums', AlbumViewSet)
 
 urlpatterns = [
 
-    path('users/auth/', auth),
+    path('auth/', auth),
     path('users/password/reset/<slug:token>/', validate_email_token),
     path('users/password/reset/', reset_password),
+
     path('photos/filter/', PhotoList.as_view()),
     path('photos/<int:photo_id>/comments/filter/', CommentList.as_view()),
 

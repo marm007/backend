@@ -126,6 +126,9 @@ class PhotoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
+        print(request.user)
+        print(request.META)
         data = {'user_id': request.user.id}
         image = request.data.get('image')
         description = request.data.get('description')
@@ -142,6 +145,11 @@ class PhotoViewSet(viewsets.ModelViewSet):
         queryset = self.filter_queryset(self.get_queryset())
 
         serializer = PhotoUserSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = PhotoUserSerializer(instance)
         return Response(serializer.data)
 
 

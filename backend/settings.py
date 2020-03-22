@@ -66,7 +66,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
-
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
@@ -102,9 +102,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'photo-app',
+        'NAME': 'backend-insta-test-test',
         'USER': 'root',
-        'PASSWORD': 'your_password',
+        'PASSWORD': '',
         'HOST': "",
         'PORT': "",
         'OPTIONS': {
