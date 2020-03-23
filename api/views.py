@@ -126,9 +126,6 @@ class PhotoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
-        print(request.user)
-        print(request.META)
         data = {'user_id': request.user.id}
         image = request.data.get('image')
         description = request.data.get('description')

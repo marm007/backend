@@ -105,6 +105,32 @@ class AlbumSerializerPhotos(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class CommentSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+    photo_id = serializers.IntegerField()
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'user_id', 'photo_id', 'body', 'author_name')
+
+    def create(self, validated_data):
+        comment = Comment(**validated_data)
+        comment.save()
+        return comment
+
+
+class CommentPhotoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('body', 'author_name')
+
+    def create(self, validated_data):
+        comment = Comment(**validated_data)
+        comment.save()
+        return comment
+
+
 class PhotoSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
     album_set = AlbumSerializerPhotos(many=True, required=False)
@@ -122,24 +148,11 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 class PhotoUserSerializer(serializers.ModelSerializer):
     user = UserPhotoSerializer()
+    comments = CommentPhotoSerializer(many=True, required=False)
     liked = LikeSerializerPhoto(many=True, required=False)
 
     class Meta:
         model = Photo
-        fields = ('id', 'user', 'image', 'description', 'likes', 'liked')
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField()
-    photo_id = serializers.IntegerField()
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'user_id', 'photo_id', 'body', 'author_name')
-
-    def create(self, validated_data):
-        comment = Comment(**validated_data)
-        comment.save()
-        return comment
+        fields = ('id', 'user', 'image', 'description', 'likes', 'liked', 'comments')
 
 
