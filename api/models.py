@@ -33,6 +33,9 @@ class Photo(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('-created',)
+
 
 class Album(models.Model):
     name = models.CharField(max_length=100)

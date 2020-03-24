@@ -103,24 +103,32 @@ class PhotoViewSet(viewsets.ModelViewSet):
     @action(methods=['patch'], detail=True, permission_classes=[IsAuthenticated],
             url_path='like', url_name='photos_like')
     def like(self, request, *args, **kwargs):
-        photo = self.get_object()
-        queryset = photo.liked.filter(user_id=request.user.id)
+        instance = self.get_object()
+        queryset = instance.liked.filter(user_id=request.user.id)
         is_already_liked = bool(queryset)
         if is_already_liked:
             queryset.delete()
-            serializer = self.get_serializer(photo)
+            data = {'likes': instance.likes - 1}
+            serializer = PhotoUserSerializer(instance, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         else:
-            photo_id = photo.id
+            photo_id = instance.id
             user_id = request.user.id
             data = {'photo_id': photo_id, 'user_id': user_id}
             like_serializer = LikeSerializer(data=data)
 
             if like_serializer.is_valid():
                 like_serializer.save()
-                json_data = like_serializer.data
-                return Response(json_data, status=status.HTTP_201_CREATED)
+                data = {'likes': instance.likes + 1}
+                serializer = PhotoUserSerializer(instance, data=data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    json_data = serializer.data
+                    return Response(json_data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             return Response(like_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
