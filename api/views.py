@@ -8,6 +8,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 
+from api.models import Relation
 from api.premissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
 from .serializers import *
 
@@ -208,6 +209,23 @@ class AlbumViewSet(viewsets.ModelViewSet):
     def partial_update(self, request, *args, **kwargs):
         album = self.get_object()
         serializer = AlbumSerializer(album, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            json_data = serializer.data
+            return Response(json_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class RelationViewSet(viewsets.ModelViewSet):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        data = {'user_id': request.user.id}
+        image = request.data.get('image')
+        data.update({'image': image})
+        serializer = RelationSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             json_data = serializer.data

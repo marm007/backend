@@ -37,6 +37,11 @@ class Photo(models.Model):
         ordering = ('-created',)
 
 
+class Relation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='relations')
+    image = models.FileField(upload_to='relations')
+
+
 class Album(models.Model):
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='album')

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import User, UserProfile, Photo, Comment, Like, Album
+from api.models import User, UserProfile, Photo, Comment, Like, Album, Relation
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -156,3 +156,9 @@ class PhotoUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'image', 'description', 'likes', 'liked', 'comments')
 
 
+class RelationSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField()
+
+    class Meta:
+        model = Relation
+        fields = ('id', 'image', 'user_id')
