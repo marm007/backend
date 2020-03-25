@@ -91,9 +91,14 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
-    def relation(self, request, *args, **kwargs):
+    def get_relations(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = UserRelationSerializer(instance)
+        return Response(serializer.data)
+
+    def get_posts(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserPostsSerializer(instance)
         return Response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
@@ -227,7 +232,8 @@ class RelationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
-        data = {'user_id': request.user.id}
+        data = {'user_id': request.user.id,
+                'user': request.user}
         image = request.data.get('image')
         data.update({'image': image})
         serializer = RelationSerializer(data=data)

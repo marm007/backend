@@ -39,11 +39,21 @@ class EmailSerializer(serializers.ModelSerializer):
         fields = ('email', )
 
 
+class UserRelationSerializer(serializers.ModelSerializer):
+    profile = UserProfileSerializer(read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'profile')
+
+
 class RelationSerializer(serializers.ModelSerializer):
+    user = UserRelationSerializer(read_only=True)
+    user_id = serializers.IntegerField()
 
     class Meta:
         model = Relation
-        fields = ('id', 'image')
+        fields = ('id', 'image', 'user', 'user_id')
 
 
 class FollowerSerializer(serializers.ModelSerializer):
@@ -54,19 +64,17 @@ class FollowerSerializer(serializers.ModelSerializer):
 
 
 class FollowedUserSerializer(serializers.ModelSerializer):
-    profile = UserProfileSerializer()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'profile')
+        fields = ('id',)
 
 
 class FollowedSerializer(serializers.ModelSerializer):
-    user = FollowedUserSerializer(source='followed')
 
     class Meta:
         model = Follower
-        fields = ('id', 'user')
+        fields = ('id', 'followed')
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -113,6 +121,36 @@ class UserPhotoSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('username', 'profile')
 
 
+class CommentPhotoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('body', 'author_name')
+
+    def create(self, validated_data):
+        comment = Comment(**validated_data)
+        comment.save()
+        return comment
+
+
+class PostSerializer(serializers.ModelSerializer):
+    liked = LikeSerializerPhoto(many=True, required=False)
+    comments = CommentPhotoSerializer(many=True, required=False)
+
+    class Meta:
+        model = Photo
+        fields = ('id', 'image', 'description', 'likes', 'liked', 'comments', 'created')
+
+
+class UserPostsSerializer(serializers.HyperlinkedModelSerializer):
+    profile = UserProfileSerializer()
+    posts = PostSerializer(source='photos', many=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'profile', 'posts')
+
+
 class AlbumSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
 
@@ -154,18 +192,6 @@ class CommentSerializer(serializers.ModelSerializer):
         return comment
 
 
-class CommentPhotoSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Comment
-        fields = ('body', 'author_name')
-
-    def create(self, validated_data):
-        comment = Comment(**validated_data)
-        comment.save()
-        return comment
-
-
 class PhotoSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField()
     album_set = AlbumSerializerPhotos(many=True, required=False)
@@ -191,14 +217,13 @@ class PhotoUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'image', 'description', 'likes', 'liked', 'comments')
 
 
-
 class UserRelationSerializer(serializers.HyperlinkedModelSerializer):
     profile = UserProfileSerializer()
     relations = RelationSerializer(many=True, required=False)
 
     class Meta:
         model = User
-        fields = ('username', 'profile', 'id', 'relations')
+        fields = ('id', 'username', 'profile', 'relations')
 
 
 class RelationSerializerGet(serializers.ModelSerializer):

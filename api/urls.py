@@ -21,19 +21,25 @@ comments_detail = CommentViewSet.as_view({
     'delete': 'destroy'
 })
 
-relation_user = UsersViewSet.as_view({
-    'get': 'relation',
+user_relations = UsersViewSet.as_view({
+    'get': 'get_relations',
+})
+
+user_posts = UsersViewSet.as_view({
+    'get': 'get_posts',
 })
 
 router = DefaultRouter()
 router.register(r'users', UsersViewSet)
 router.register(r'photos', PhotoViewSet)
 router.register(r'albums', AlbumViewSet)
+router.register(r'relations', RelationViewSet)
 
 urlpatterns = [
 
     path('auth/', auth),
-    path('users/<int:pk>/relations/', relation_user),
+    path('users/<int:pk>/relations/', user_relations),
+    path('users/<int:pk>/posts/', user_posts),
     path('users/password/reset/<slug:token>/', validate_email_token),
     path('users/password/reset/', reset_password),
 
