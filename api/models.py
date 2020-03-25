@@ -68,7 +68,7 @@ class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked')
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='liked')
 
-        class Meta:
+    class Meta:
         unique_together = ('user', 'photo',)
 
 
