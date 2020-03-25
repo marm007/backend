@@ -3,7 +3,8 @@ from rest_auth.views import PasswordResetView
 from rest_framework.routers import DefaultRouter
 
 from api.filters import PhotoList, CommentList
-from .views import UsersViewSet, PhotoViewSet, CommentViewSet, AlbumViewSet, auth, reset_password, validate_email_token
+from .views import UsersViewSet, PhotoViewSet, CommentViewSet, AlbumViewSet, auth, reset_password, validate_email_token, \
+    RelationViewSet
 
 from rest_framework_simplejwt import views as jwt_views
 
@@ -20,6 +21,10 @@ comments_detail = CommentViewSet.as_view({
     'delete': 'destroy'
 })
 
+relation_user = UsersViewSet.as_view({
+    'get': 'relation',
+})
+
 router = DefaultRouter()
 router.register(r'users', UsersViewSet)
 router.register(r'photos', PhotoViewSet)
@@ -28,6 +33,7 @@ router.register(r'albums', AlbumViewSet)
 urlpatterns = [
 
     path('auth/', auth),
+    path('users/<int:pk>/relations/', relation_user),
     path('users/password/reset/<slug:token>/', validate_email_token),
     path('users/password/reset/', reset_password),
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import User, UserProfile, Photo, Comment, Like, Album, Relation
+from api.models import User, UserProfile, Photo, Comment, Like, Album, Relation, Follower
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -39,13 +39,48 @@ class EmailSerializer(serializers.ModelSerializer):
         fields = ('email', )
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class RelationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Relation
+        fields = ('id', 'image')
+
+
+class FollowerSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Follower
+        fields = ('id', 'follower')
+
+
+class FollowedUserSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer()
-    liked = LikeSerializerUser(many=True, required=False)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password', 'profile', 'liked')
+        fields = ('id', 'username', 'profile')
+
+
+class FollowedSerializer(serializers.ModelSerializer):
+    user = FollowedUserSerializer(source='followed')
+
+    class Meta:
+        model = Follower
+        fields = ('id', 'user')
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    profile = UserProfileSerializer()
+    liked = LikeSerializerUser(many=True, required=False)
+    relations = RelationSerializer(many=True, required=False)
+    followers = FollowerSerializer(many=True, required=False)
+    followed = FollowedSerializer(many=True, required=False)
+    # followed = FollowerSerializer(many=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password',
+                  'profile', 'liked', 'relations', 'followers', 'followed')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -156,9 +191,19 @@ class PhotoUserSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'image', 'description', 'likes', 'liked', 'comments')
 
 
-class RelationSerializer(serializers.ModelSerializer):
-    user_id = serializers.IntegerField()
+
+class UserRelationSerializer(serializers.HyperlinkedModelSerializer):
+    profile = UserProfileSerializer()
+    relations = RelationSerializer(many=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ('username', 'profile', 'id', 'relations')
+
+
+class RelationSerializerGet(serializers.ModelSerializer):
+    user = UserRelationSerializer()
 
     class Meta:
         model = Relation
-        fields = ('id', 'image', 'user_id')
+        fields = ('id', 'image', 'user')

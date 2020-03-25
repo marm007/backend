@@ -68,13 +68,13 @@ class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked')
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='liked')
 
-    class Meta:
+        class Meta:
         unique_together = ('user', 'photo',)
 
 
 class Follower(models.Model):
-    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='follower')
-    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+    follower = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
+    followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
     started_following = models.DateTimeField(auto_now_add=True)
 
     class Meta:

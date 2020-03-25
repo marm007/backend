@@ -91,6 +91,11 @@ class UsersViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
+    def relation(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserRelationSerializer(instance)
+        return Response(serializer.data)
+
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
@@ -218,7 +223,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
 class RelationViewSet(viewsets.ModelViewSet):
     queryset = Relation.objects.all()
-    serializer_class = RelationSerializer
+    serializer_class = RelationSerializerGet
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
