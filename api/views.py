@@ -103,7 +103,8 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        serializer = UserMyProfileSerializer(instance)
+        print(serializer.data)
         return Response(serializer.data)
 
 

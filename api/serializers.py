@@ -39,7 +39,7 @@ class EmailSerializer(serializers.ModelSerializer):
         fields = ('email', )
 
 
-class UserRelationSerializer(serializers.ModelSerializer):
+class UserRelationHelperSerializer(serializers.ModelSerializer):
     profile = UserProfileSerializer(read_only=True)
 
     class Meta:
@@ -48,12 +48,12 @@ class UserRelationSerializer(serializers.ModelSerializer):
 
 
 class RelationSerializer(serializers.ModelSerializer):
-    user = UserRelationSerializer(read_only=True)
+    user = UserRelationHelperSerializer(read_only=True)
     user_id = serializers.IntegerField()
 
     class Meta:
         model = Relation
-        fields = ('id', 'image', 'user', 'user_id')
+        fields = ('id', 'image', 'user', 'user_id', 'created')
 
 
 class FollowerSerializer(serializers.ModelSerializer):
@@ -140,6 +140,20 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ('id', 'image', 'description', 'likes', 'liked', 'comments', 'created')
+
+
+class UserMyProfileSerializer(serializers.HyperlinkedModelSerializer):
+    profile = UserProfileSerializer()
+    liked = LikeSerializerUser(many=True, required=False)
+    relations = RelationSerializer(many=True, required=False)
+    posts = PostSerializer(source='photos', many=True, required=False)
+    followers = FollowerSerializer(many=True, required=False)
+    followed = FollowedSerializer(many=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name',
+                  'profile', 'liked', 'relations', 'followers', 'followed', 'posts')
 
 
 class UserPostsSerializer(serializers.HyperlinkedModelSerializer):
