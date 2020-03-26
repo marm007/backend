@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 
 from api.filters import PhotoList, CommentList
 from .views import UsersViewSet, PhotoViewSet, CommentViewSet, AlbumViewSet, auth, reset_password, validate_email_token, \
-    RelationViewSet
+    RelationViewSet, FollowerViewSet
 
 from rest_framework_simplejwt import views as jwt_views
 
@@ -34,6 +34,7 @@ router.register(r'users', UsersViewSet)
 router.register(r'photos', PhotoViewSet)
 router.register(r'albums', AlbumViewSet)
 router.register(r'relations', RelationViewSet)
+router.register(r'followers', FollowerViewSet)
 
 urlpatterns = [
 

@@ -9,7 +9,7 @@ from rest_framework.decorators import action, api_view, permission_classes, auth
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 
 from api.models import Relation
-from api.premissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+from api.premissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly, ContainsOrReadOnly
 from .serializers import *
 
 from rest_framework import status, viewsets
@@ -90,6 +90,17 @@ class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        print(request.data)
+        data = request.data
+        data.update({'profile': {'photo': request.data.get('profile_photo')}})
+        print(data)
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_relations(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -242,4 +253,18 @@ class RelationViewSet(viewsets.ModelViewSet):
             serializer.save()
             json_data = serializer.data
             return Response(json_data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FollowerViewSet(viewsets.ModelViewSet):
+    queryset = Follower.objects.all()
+    serializer_class = FollowerModelSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, ContainsOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        data = {'follower': request.user.id, 'followed': request.data.get('followed')}
+        serializer = FollowerModelSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -56,6 +56,13 @@ class RelationSerializer(serializers.ModelSerializer):
         fields = ('id', 'image', 'user', 'user_id', 'created')
 
 
+class FollowerModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Follower
+        fields = ('id', 'follower', 'followed')
+
+
 class FollowerSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -118,7 +125,7 @@ class UserPhotoSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'profile')
+        fields = ('id', 'username', 'profile')
 
 
 class CommentPhotoSerializer(serializers.ModelSerializer):
