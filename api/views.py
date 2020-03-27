@@ -35,7 +35,7 @@ def auth(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def reset_password(request):
+def forgot_password(request):
 
     email = request.data.get('email')
     if email is not None:
@@ -92,10 +92,8 @@ class UsersViewSet(viewsets.ModelViewSet):
     permission_classes = [IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
-        print(request.data)
         data = request.data
         data.update({'profile': {'photo': request.data.get('profile_photo')}})
-        print(data)
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
@@ -115,7 +113,6 @@ class UsersViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = UserMyProfileSerializer(instance)
-        print(serializer.data)
         return Response(serializer.data)
 
 

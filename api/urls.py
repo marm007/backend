@@ -1,10 +1,9 @@
 from django.urls import path, include
-from rest_auth.views import PasswordResetView
 from rest_framework.routers import DefaultRouter
 
 from api.filters import PhotoList, CommentList
-from .views import UsersViewSet, PhotoViewSet, CommentViewSet, AlbumViewSet, auth, reset_password, validate_email_token, \
-    RelationViewSet, FollowerViewSet
+from .views import UsersViewSet, PhotoViewSet, CommentViewSet, AlbumViewSet, auth, validate_email_token, \
+    RelationViewSet, FollowerViewSet, forgot_password
 
 from rest_framework_simplejwt import views as jwt_views
 
@@ -42,7 +41,7 @@ urlpatterns = [
     path('users/<int:pk>/relations/', user_relations),
     path('users/<int:pk>/posts/', user_posts),
     path('users/password/reset/<slug:token>/', validate_email_token),
-    path('users/password/reset/', reset_password),
+    path('users/password/forgot/', forgot_password),
 
     path('photos/filter/', PhotoList.as_view()),
     path('photos/<int:photo_id>/comments/filter/', CommentList.as_view()),
