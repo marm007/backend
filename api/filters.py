@@ -3,19 +3,20 @@ from django_filters.rest_framework import DjangoFilterBackend, filters
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
-from api.models import Photo, Comment
-from api.serializers import PhotoSerializer, CommentSerializer
+from api.models import Post, Comment
 
 
 # Utworzenie filtra pozwalającego na filtrowanie zdjęć ze względu na:
 # like wartość większe od podanej w zapytaniu
 # user_id takie jak w zapytaniu
 # description zawartośći opsiu zdjęcia
+from api.serializers.comment import CommentSerializer
+from api.serializers.post import PostSerializer
 
 
 class PhotoFilter(django_filters.FilterSet):
     class Meta:
-        model = Photo
+        model = Post
         fields = {
             'likes': ['gt', ],
             'user_id': ['exact', ],
@@ -25,8 +26,8 @@ class PhotoFilter(django_filters.FilterSet):
 
 class PhotoList(generics.ListAPIView):
     permission_classes = (AllowAny,)
-    queryset = Photo.objects.all()
-    serializer_class = PhotoSerializer
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = PhotoFilter
 

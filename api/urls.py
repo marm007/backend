@@ -2,11 +2,15 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from api.filters import PhotoList, CommentList
-from .views import UsersViewSet, PhotoViewSet, CommentViewSet, AlbumViewSet, auth, validate_email_token, \
-    RelationViewSet, FollowerViewSet, forgot_password
 
 from rest_framework_simplejwt import views as jwt_views
 
+from api.views.album import AlbumViewSet
+from api.views.comment import CommentViewSet
+from api.views.follower import FollowerViewSet
+from api.views.post import PostViewSet
+from api.views.relation import RelationViewSet
+from api.views.user import UsersViewSet, validate_email_token, forgot_password, auth
 
 comments_list = CommentViewSet.as_view({
     'post': 'create',
@@ -30,7 +34,7 @@ user_posts = UsersViewSet.as_view({
 
 router = DefaultRouter()
 router.register(r'users', UsersViewSet)
-router.register(r'photos', PhotoViewSet)
+router.register(r'photos', PostViewSet)
 router.register(r'albums', AlbumViewSet)
 router.register(r'relations', RelationViewSet)
 router.register(r'followers', FollowerViewSet)
