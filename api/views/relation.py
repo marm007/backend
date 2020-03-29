@@ -1,27 +1,35 @@
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+from rest_framework.decorators import api_view, authentication_classes, permission_classes, action
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
-
-from rest_framework import status, viewsets
+from rest_framework import viewsets, mixins, status
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from api.models import Relation
-from api.permissions import IsOwnerOrReadOnly
+from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing, \
+    IsCreationOrIsAuthenticatedOrReadOnly
 from api.serializers.relation import RelationSerializer
 
 
-class RelationViewSet(viewsets.ModelViewSet):
+class RelationViewSet(mixins.CreateModelMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing]
 
-    def create(self, request, *args, **kwargs):
-        data = {'user_id': request.user.id,
-                'user': request.user}
-        image = request.data.get('image')
-        data.update({'image': image})
-        serializer = RelationSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            json_data = serializer.data
-            return Response(json_data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "You do not have permission to perform this action."},
+                            status=status.HTTP_403_FORBIDDEN)
+

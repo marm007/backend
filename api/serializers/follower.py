@@ -1,31 +1,13 @@
 from rest_framework import serializers
 
-from api.models import Follower, User
+from api.models import Follower
 
 
 class FollowerModelSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField
+    user_being_followed = serializers.PrimaryKeyRelatedField
 
     class Meta:
         model = Follower
-        fields = ('id', 'follower', 'followed')
+        fields = ('id', 'user', 'user_being_followed')
 
-
-class FollowerSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Follower
-        fields = ('id', 'follower')
-
-
-class FollowedUserSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('id',)
-
-
-class FollowedSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Follower
-        fields = ('id', 'followed')

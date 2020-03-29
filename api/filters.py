@@ -42,7 +42,7 @@ class CommentFilter(django_filters.FilterSet):
         }
 
 
-class CommentList(generics.ListAPIView):
+class CommentListFilter(generics.ListAPIView):
 
     permission_classes = (AllowAny,)
 

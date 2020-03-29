@@ -1,21 +1,20 @@
-from rest_framework import viewsets, status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.models import Follower
-from api.permissions import ContainsOrReadOnly
 from api.serializers.follower import FollowerModelSerializer
 
 
-class FollowerViewSet(viewsets.ModelViewSet):
-    queryset = Follower.objects.all()
-    serializer_class = FollowerModelSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly, ContainsOrReadOnly]
+class FollowerRetrieve(APIView):
+    permission_classes = [AllowAny]
 
-    def create(self, request, *args, **kwargs):
-        data = {'follower': request.user.id, 'followed': request.data.get('followed')}
-        serializer = FollowerModelSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def get(self, request, *args, **kwargs):
+        follower = Follower.objects.filter(id=kwargs.get('pk')).first()
+        if bool(follower):
+            serializer = FollowerModelSerializer(follower)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Object dose not exists.'}, status=status.HTTP_404_NOT_FOUND)

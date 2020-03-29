@@ -3,26 +3,24 @@ from rest_framework import serializers
 from api.models import Relation, UserMeta, User
 
 
-#
-# class UserSerializer(serializers.ModelSerializer):
-#     profile = UserProfileSerializer(read_only=True)
-#
-#     class Meta:
-#         model = User
-#         fields = ('id', 'username', 'profile')
+class UserMetaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserMeta
+        fields = ('photo',)
 
 
-class RelationUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
+    meta = UserMetaSerializer()
 
     class Meta:
         model = User
-        fields = ('id', 'username')
+        fields = ('id', 'username', 'meta')
 
 
 class RelationSerializer(serializers.ModelSerializer):
-    user = RelationUserSerializer(required=False)
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Relation
-        fields = ('id', 'image', 'user', 'created')
-
+        fields = ('id', 'image', 'created', 'user')

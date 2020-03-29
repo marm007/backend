@@ -1,29 +1,35 @@
 from rest_framework import serializers
 
-from api.models import UserMeta, User
-from api.serializers.follower import FollowerSerializer, FollowedSerializer
-from api.serializers.like import LikeSerializerUser
-from api.serializers.relation import RelationSerializer
+from api.models import UserMeta, User, Like
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserMeta
-        fields = ('photo',)
+        fields = ('photo', 'is_private')
+
+
+class LikeSerializerUser(serializers.ModelSerializer):
+
+    class Meta:
+        model = Like
+        fields = ('id',)
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    meta = UserMetaSerializer(required=True)
-    liked = LikeSerializerUser(many=True, read_only=True)
-    relations = RelationSerializer(many=True, read_only=True)
-    followers = FollowerSerializer(many=True, read_only=True)
-    followed = FollowedSerializer(many=True, read_only=True)
+    meta = UserMetaSerializer()
+    likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    relations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    followed = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    comments = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
         fields = ('id', 'username', 'email', 'first_name', 'last_name', 'password',
-                  'meta', 'liked', 'relations', 'followers', 'followed')
+                  'meta', 'likes', 'relations', 'followers', 'followed', 'posts', 'comments')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -51,10 +57,22 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         return instance
 
 
-class UserRelationSerializer(serializers.HyperlinkedModelSerializer):
+class UserFollowSerializer(serializers.ModelSerializer):
     meta = UserMetaSerializer()
-    relations = RelationSerializer(many=True)
+    followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    followed = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'meta', 'relations')
+        fields = ('id', 'username', 'first_name', 'last_name', 'meta', 'followers', 'followed', 'posts')
+
+
+class UserRetrieveSerializer(serializers.ModelSerializer):
+    meta = UserMetaSerializer()
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    relations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'meta', 'posts', 'relations')

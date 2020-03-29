@@ -21,8 +21,9 @@ class UserMeta(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='meta')
     photo = models.ImageField(upload_to='users/%Y/%m/%d')
+    is_private = models.BooleanField(default=False)
     reset_password_token = models.SlugField(max_length=250, blank=True)
-    reset_password_expires = models.DateTimeField(blank=True, default=datetime.now)
+    reset_password_expires = models.DateTimeField(auto_now_add=True)
 
 
 class Album(models.Model):
@@ -41,10 +42,10 @@ class Follower(models.Model):
 
 
 class Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photos')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     image = models.FileField(upload_to='images')
     description = models.TextField()
-    likes = models.IntegerField(default=0)
+    likes = models.PositiveIntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -69,8 +70,9 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='liked')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='liked')
+    created = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         unique_together = ('user', 'post',)

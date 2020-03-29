@@ -1,74 +1,53 @@
 from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny, IsAdminUser
 
-
-from rest_framework import status, viewsets
+from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from api.models import Post
-from api.permissions import IsOwnerOrReadOnly
-from api.serializers.like import LikeSerializer
+from api.models import Post, Like
+from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing
 from api.serializers.post import PostSerializer
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(mixins.CreateModelMixin,
+                  mixins.RetrieveModelMixin,
+                  mixins.UpdateModelMixin,
+                  mixins.DestroyModelMixin,
+                  viewsets.GenericViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def list(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            queryset = self.filter_queryset(self.get_queryset())
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
+        else:
+            return Response({"detail": "You do not have permission to perform this action."},
+                            status=status.HTTP_403_FORBIDDEN)
+
     @action(methods=['patch'], detail=True, permission_classes=[IsAuthenticated],
-            url_path='like', url_name='photos_like')
-    def like(self, request, *args, **kwargs):
+            url_path='like', url_name='post_like')
+    def post_like(self, request, *args, **kwargs):
         instance = self.get_object()
-        queryset = instance.liked.filter(user_id=request.user.id)
+        queryset = instance.liked.filter(user=request.user)
         is_already_liked = bool(queryset)
         if is_already_liked:
             queryset.delete()
-            data = {'likes': instance.likes - 1}
-            serializer = PostSerializer(instance, data=data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            serializer = self.get_serializer(instance, data={'likes': instance.liked.count()}, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data)
 
         else:
-            photo_id = instance.id
-            user_id = request.user.id
-            data = {'photo_id': photo_id, 'user_id': user_id}
-            like_serializer = LikeSerializer(data=data)
-
-            if like_serializer.is_valid():
-                like_serializer.save()
-                data = {'likes': instance.likes + 1}
-                serializer = PostSerializer(instance, data=data, partial=True)
-                if serializer.is_valid():
-                    serializer.save()
-                    json_data = serializer.data
-                    return Response(json_data, status=status.HTTP_201_CREATED)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            return Response(like_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
-
-    def create(self, request, *args, **kwargs):
-        data = {'user_id': request.user.id}
-        image = request.data.get('image')
-        description = request.data.get('description')
-        data.update({'image': image, 'description': description})
-        serializer = PostSerializer(data=data)
-
-        if serializer.is_valid():
-            serializer.save()
-            json_data = serializer.data
-            return Response(json_data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-
-        serializer = PostSerializer(queryset, many=True)
-        return Response(serializer.data)
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = PostSerializer(instance)
-        return Response(serializer.data)
-
+            Like.objects.create(post=instance, user=request.user)
+            serializer = self.get_serializer(instance, data={'likes': instance.liked.count()}, partial=True)
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
