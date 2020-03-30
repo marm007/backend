@@ -135,6 +135,9 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        print(instance.meta.avatar_thumbnail)
+        print(instance.meta.avatar_thumbnail.width)
+        print(instance.meta.avatar_thumbnail.height)
         if request.user.id is not None:
             if instance.id is request.user.id:
                 serializer = self.get_serializer(instance)

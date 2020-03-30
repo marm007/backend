@@ -64,7 +64,6 @@ class CommentListFilter(generics.ListAPIView):
 
     def get_queryset(self):
         photo_id = self.kwargs.get('photo_id')
-        print(photo_id)
         return Comment.objects.filter(photo=photo_id)
 
     serializer_class = CommentSerializer

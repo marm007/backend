@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from api.filters import PhotoList, CommentListFilter, UsersFilterList
+from api.filters import UsersFilterList
 
 from rest_framework_simplejwt import views as jwt_views
 
@@ -53,9 +53,6 @@ urlpatterns = [
     path('posts/<int:pk>/comments/', comments_create),
 
     path('followers/<int:pk>/', FollowerRetrieve.as_view()),
-
-    # path('photos/filter/', PhotoList.as_view()),
-    # path('photos/<int:photo_id>/comments/filter/', CommentList.as_view()),
 
     path('token/obtain/', jwt_views.TokenObtainPairView.as_view(), name='token_create'),  # override sjwt stock token
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),

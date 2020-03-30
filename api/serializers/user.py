@@ -4,10 +4,11 @@ from api.models import UserMeta, User, Like
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
+    avatar_thumbnail = serializers.ImageField(read_only=True)
 
     class Meta:
         model = UserMeta
-        fields = ('photo', 'is_private')
+        fields = ('avatar', 'avatar_thumbnail', 'is_private')
 
 
 class UserFilterSerializer(serializers.ModelSerializer):
@@ -57,7 +58,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         instance.password = validated_data.get('password', instance.password)
         instance.email = validated_data.get('email', instance.email)
 
-        meta.photo = meta_data.get('photo', meta.photo)
+        meta.avatar = meta_data.get('avatar', meta.avatar)
         meta.save()
 
         instance.save()
