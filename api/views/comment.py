@@ -1,5 +1,5 @@
-from rest_framework import status, viewsets, serializers, mixins
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, IsAdminUser
+from rest_framework import status, serializers, mixins
+from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet

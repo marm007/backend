@@ -10,6 +10,14 @@ class UserMetaSerializer(serializers.ModelSerializer):
         fields = ('photo', 'is_private')
 
 
+class UserFilterSerializer(serializers.ModelSerializer):
+    meta = UserMetaSerializer()
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'meta')
+
+
 class LikeSerializerUser(serializers.ModelSerializer):
 
     class Meta:
