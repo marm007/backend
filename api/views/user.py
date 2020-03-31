@@ -1,6 +1,9 @@
 from datetime import timedelta
 
+import cloudinary
 from django.core.mail import send_mail
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.crypto import get_random_string
@@ -128,6 +131,11 @@ class ListFollowedRelations(mixins.ListModelMixin,
         return Response(serializer.data)
 
 
+@receiver(pre_delete, sender=User)
+def photo_delete(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(instance.meta.avatar.public_id)
+
+
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -135,9 +143,6 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        print(instance.meta.avatar_thumbnail)
-        print(instance.meta.avatar_thumbnail.width)
-        print(instance.meta.avatar_thumbnail.height)
         if request.user.id is not None:
             if instance.id is request.user.id:
                 serializer = self.get_serializer(instance)

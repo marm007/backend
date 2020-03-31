@@ -20,10 +20,7 @@ class UserMeta(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='meta')
     avatar = CloudinaryField('avatars')
-    # avatar_thumbnail = ImageSpecField(source='avatar',
-    #                                   processors=[ResizeToFit(100)],
-    #                                   format='JPEG',
-    #                                   options={'quality': 60})
+
     is_private = models.BooleanField(default=False)
     reset_password_token = models.SlugField(max_length=250, blank=True)
     reset_password_expires = models.DateTimeField(auto_now_add=True)
