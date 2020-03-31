@@ -1,3 +1,6 @@
+import cloudinary
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
@@ -7,6 +10,11 @@ from rest_framework.response import Response
 from api.models import Post, Like
 from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing
 from api.serializers.post import PostSerializer
+
+
+@receiver(pre_delete, sender=Post)
+def photo_delete(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(instance.image.public_id)
 
 
 class PostViewSet(mixins.CreateModelMixin,

@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from cloudinary.forms import CloudinaryJsFileField
+from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
@@ -22,11 +24,11 @@ class User(AbstractUser):
 class UserMeta(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='meta')
-    avatar = models.ImageField(upload_to='users/%Y/%m/%d')
-    avatar_thumbnail = ImageSpecField(source='avatar',
-                                      processors=[ResizeToFit(100)],
-                                      format='JPEG',
-                                      options={'quality': 60})
+    avatar = CloudinaryField('avatars')
+    # avatar_thumbnail = ImageSpecField(source='avatar',
+    #                                   processors=[ResizeToFit(100)],
+    #                                   format='JPEG',
+    #                                   options={'quality': 60})
     is_private = models.BooleanField(default=False)
     reset_password_token = models.SlugField(max_length=250, blank=True)
     reset_password_expires = models.DateTimeField(auto_now_add=True)
@@ -49,15 +51,8 @@ class Follower(models.Model):
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
-    image = models.FileField(upload_to='posts')
-    image_profile = ImageSpecField(source='image',
-                                   processors=[ResizeToFit(None, 256)],
-                                   format='JPEG',
-                                   options={'quality': 90})
-    image_thumbnail = ImageSpecField(source='image',
-                                     processors=[ResizeToFit(100)],
-                                     format='JPEG',
-                                     options={'quality': 60})
+
+    image = CloudinaryField('posts')
     description = models.TextField()
     likes = models.PositiveIntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)

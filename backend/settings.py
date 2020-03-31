@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
@@ -51,7 +54,14 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'corsheaders',
+    'cloudinary',
 ]
+
+cloudinary.config(
+  cloud_name = "marm007",
+  api_key = "898958364236332",
+  api_secret = "_lkWoYBgU802T7NgnO7mrn5K_Lg"
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,9 +112,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'photo-app',
+        'NAME': 'backend-insta-test-test',
         'USER': 'root',
-        'PASSWORD': 'your_password',
+        'PASSWORD': '',
         'HOST': "",
         'PORT': "",
         'OPTIONS': {

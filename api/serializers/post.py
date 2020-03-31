@@ -6,11 +6,10 @@ from api.serializers.like import LikeSerializer
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
-    avatar_thumbnail = serializers.ImageField(read_only=True)
 
     class Meta:
         model = UserMeta
-        fields = ('avatar', 'avatar_thumbnail')
+        fields = ('avatar', )
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -35,12 +34,10 @@ class PostSerializer(serializers.ModelSerializer):
     album_set = AlbumSerializer(many=True, read_only=True)
     liked = LikeSerializer(many=True, read_only=True)
     comments = PostCommentSerializer(many=True, read_only=True)
-    image_profile = serializers.ImageField(read_only=True)
-    image_thumbnail = serializers.ImageField(read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'image', 'image_profile', 'image_thumbnail',
+        fields = ('id', 'image',
                   'description', 'likes', 'album_set', 'liked', 'user', 'comments', 'created')
 
 

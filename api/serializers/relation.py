@@ -4,11 +4,10 @@ from api.models import Relation, UserMeta, User
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
-    avatar_thumbnail = serializers.ImageField(read_only=True)
 
     class Meta:
         model = UserMeta
-        fields = ('avatar', 'avatar_thumbnail')
+        fields = ('avatar',)
 
 
 class UserSerializer(serializers.ModelSerializer):
