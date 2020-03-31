@@ -1,13 +1,8 @@
-from datetime import datetime
-
-from cloudinary.forms import CloudinaryJsFileField
 from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from imagekit.models import ImageSpecField
-from pilkit.processors import ResizeToFill, ResizeToFit
 
 
 class User(AbstractUser):

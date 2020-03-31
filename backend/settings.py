@@ -17,6 +17,12 @@ import cloudinary.api
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
+import os
+import psycopg2
+
+DATABASE_URL = os.environ['DATABASE_URL']
+
+conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,12 +31,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'osmgv!-q9w5l5u!8ddapako85f#sjk564m49@7r$o@2f1@f7!e'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1',
+                 'marm007-photo-app.herokuapp.com']
 
 AUTH_USER_MODEL = 'api.User'
 
@@ -60,7 +67,7 @@ INSTALLED_APPS = [
 cloudinary.config(
   cloud_name = "marm007",
   api_key = "898958364236332",
-  api_secret = "_lkWoYBgU802T7NgnO7mrn5K_Lg"
+  api_secret = "lkWoYBgU802T7NgnO7mrn5K_Lg"
 )
 
 MIDDLEWARE = [
@@ -198,3 +205,6 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
+
+import dj_database_url
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
