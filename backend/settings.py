@@ -19,6 +19,7 @@ import cloudinary.api
 from datetime import timedelta
 import os
 import psycopg2
+import django_heroku
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
@@ -117,17 +118,7 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'backend-insta-test-test',
-        'USER': 'root',
-        'PASSWORD': '',
-        'HOST': "",
-        'PORT': "",
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        }
-    }
+
 }
 
 
@@ -208,3 +199,4 @@ SIMPLE_JWT = {
 
 import dj_database_url
 DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+django_heroku.settings(locals())
