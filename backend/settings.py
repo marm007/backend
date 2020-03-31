@@ -63,12 +63,6 @@ INSTALLED_APPS = [
     'cloudinary',
 ]
 
-cloudinary.config(
-  cloud_name = "marm007",
-  api_key = "898958364236332",
-  api_secret = "lkWoYBgU802T7NgnO7mrn5K_Lg"
-)
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
