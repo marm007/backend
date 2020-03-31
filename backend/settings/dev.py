@@ -11,39 +11,41 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from datetime import timedelta
-import os
-import psycopg2
-import django_heroku
-import dj_database_url
+
+import cloudinary
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
-CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
+SECRET_KEY = '-KaNdRgUkXp2s5v8y/B?E(H+MbQeShVm'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1',
-                 'https://marm007.github.io/frontend/']
+ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'api.User'
 
+# CLOUDINARY_URL = 'cloudinary://637565491164232:lCez9x3wtoXhQTNFdRFkAO7EWvA@marm007-photo-app-devlopment'
+
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'appfoto375@gmail.com'
-EMAIL_HOST_PASSWORD = 'janeczek12'
+EMAIL_HOST_USER = 'instagramlikeapp55@gmail.com'
+EMAIL_HOST_PASSWORD = 'zti2020app'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+cloudinary.config(
+  cloud_name = "marm007-photo-app-devlopment",
+  api_key = "637565491164232",
+  api_secret = "lCez9x3wtoXhQTNFdRFkAO7EWvA"
+)
 
 # Application defiadadnition
 
@@ -59,7 +61,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'corsheaders',
-    'cloudinary',
 ]
 
 MIDDLEWARE = [
@@ -72,7 +73,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
@@ -82,7 +82,6 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://localhost:8080',
     'http://localhost:4200',
-    'https://marm007.github.io'
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -106,10 +105,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'photo-app',
+        'USER': 'root',
+        'PASSWORD': 'your_password',
+        'HOST': "",
+        'PORT': "",
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -129,6 +142,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
@@ -144,7 +158,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 STATIC_URL = '/static/'
 
 MEDIA_URL = '/media/'
@@ -184,6 +198,3 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
-
-DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
-django_heroku.settings(locals())

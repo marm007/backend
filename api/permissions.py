@@ -15,8 +15,6 @@ class IsFollowingOrIsFollowed(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        print(obj)
-
         return request.user.id == obj.user.id or request.user.id == obj.user_being_followed.id
 
 
@@ -28,7 +26,6 @@ class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         is_owner = request.user.id == obj.user.id
-        print(is_owner)
         if is_owner:
             return True
         else:
@@ -36,7 +33,6 @@ class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
                 return True
             is_follower = is_following(request.user.followed.all(),
                                        lambda x: x.user_being_followed.id == obj.user.id)
-            print(is_follower)
             return is_follower
 
 
