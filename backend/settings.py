@@ -116,8 +116,15 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME':'d82k81834f94ud',
+#         'USER': 'gwdmpzgnuixqdg',
+#         'PASSWORD':'d965f455653de2fd2b8f6e7db7996dfc40866f2160921d7c1fd4f55d61cf5180',
+#         'HOST': 'ec2-46-137-156-205.eu-west-1.compute.amazonaws.com'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -154,9 +161,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
@@ -196,5 +201,5 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 django_heroku.settings(locals())
-del DATABASES['default']['OPTIONS']['sslmode']
