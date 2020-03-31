@@ -81,6 +81,6 @@ class Like(models.Model):
 
 class Relation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='relations')
-    image = models.FileField(upload_to='relations')
+    image = CloudinaryField('relations')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)

@@ -1,3 +1,6 @@
+import cloudinary
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import viewsets, mixins, status
@@ -6,6 +9,11 @@ from rest_framework.response import Response
 from api.models import Relation
 from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing
 from api.serializers.relation import RelationSerializer
+
+
+@receiver(pre_delete, sender=Relation)
+def photo_delete(sender, instance, **kwargs):
+    cloudinary.uploader.destroy(instance.image.public_id)
 
 
 class RelationViewSet(mixins.CreateModelMixin,
@@ -29,4 +37,3 @@ class RelationViewSet(mixins.CreateModelMixin,
         else:
             return Response({"detail": "You do not have permission to perform this action."},
                             status=status.HTTP_403_FORBIDDEN)
-
