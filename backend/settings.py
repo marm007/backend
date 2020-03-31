@@ -35,8 +35,7 @@ CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1',
-                 'https://marm007.github.io/frontend/'
-                 ]
+                 'https://marm007.github.io/frontend/']
 
 AUTH_USER_MODEL = 'api.User'
 
@@ -83,7 +82,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://localhost:8080',
     'http://localhost:4200',
-    'https://marm007.github.io/frontend/'
+    'https://marm007.github.io'
 ]
 
 ROOT_URLCONF = 'backend.urls'
