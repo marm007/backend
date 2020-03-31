@@ -24,7 +24,6 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -36,7 +35,8 @@ CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 DEBUG = False
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1',
-                 'marm007-photo-app.herokuapp.com']
+                 'https://marm007.github.io/frontend/'
+                 ]
 
 AUTH_USER_MODEL = 'api.User'
 
@@ -83,6 +83,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://localhost:8080',
     'http://localhost:4200',
+    'https://marm007.github.io/frontend/'
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -106,7 +107,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -129,7 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
