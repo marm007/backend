@@ -9,13 +9,24 @@ def is_following(_list, _filter):
     return False
 
 
-class IsFollowingOrIsFollowed(permissions.BasePermission):
-    """
-    Custom permission to only allow followers to remove following or followed to remove follower.
-    """
+class IsOwnerOrIsAdminOrIsFollowingForProfile(permissions.BasePermission):
 
-    def has_object_permission(self, request, view, obj):
-        return request.user.id == obj.user.id or request.user.id == obj.user_being_followed.id
+    message = 'Watching posts profile is not allowed for not followers.'
+
+    def has_permission(self, request, view):
+        pk = view.kwargs.get('pk')
+        if pk is None:
+            return False
+
+        is_owner = request.user.id == pk
+        if is_owner:
+            return True
+        else:
+            if request.user.is_staff:
+                return True
+            is_follower = is_following(request.user.followed.all(),
+                                       lambda x: x.user_being_followed.id == pk)
+            return is_follower
 
 
 class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
@@ -25,6 +36,7 @@ class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
     message = 'Watching posts is not allowed for not followers.'
 
     def has_object_permission(self, request, view, obj):
+        print(obj)
         is_owner = request.user.id == obj.user.id
         if is_owner:
             return True

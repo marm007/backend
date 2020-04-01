@@ -11,18 +11,16 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
-from rest_framework import status, viewsets, mixins
+from rest_framework import status, viewsets, generics
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import User, Follower, Post, Relation
-from api.permissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly
+from api.models import User, Follower, Post
+from api.permissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly, \
+    IsOwnerOrIsAdminOrIsFollowing, IsOwnerOrIsAdminOrIsFollowingForProfile
 from api.serializers.post import PostSerializer
-from api.serializers.relation import RelationSerializer
 from api.serializers.user import UserSerializer, UserFollowSerializer, UserRetrieveSerializer
-from django.db.models import Q
 
 
 @api_view(['POST'])
@@ -101,39 +99,27 @@ def reset_password(request, *args, **kwargs):
         return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ListFollowedPosts(mixins.ListModelMixin,
-                        GenericViewSet):
-    queryset = Post.objects.all()
-    serializer_class = PostSerializer
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request, *args, **kwargs):
-        start = int(request.query_params.get('start', 0))
-        limit = int(request.query_params.get('limit', 5))
-        queryset = Post.objects.filter(Q(user__followers__user__id=request.user.id) |
-                                       Q(user=request.user))[start:limit]
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
-class ListFollowedRelations(mixins.ListModelMixin,
-                            GenericViewSet):
-    queryset = Relation.objects.all()
-    serializer_class = RelationSerializer
-    permission_classes = [IsAuthenticated]
-
-    def list(self, request, *args, **kwargs):
-        start = int(request.query_params.get('start', 0))
-        limit = int(request.query_params.get('limit', 10))
-        queryset = Relation.objects.filter(Q(user__followers__user__id=request.user.id)
-                                           | Q(user=request.user))[start:limit]
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
-
-
 @receiver(pre_delete, sender=User)
 def photo_delete(sender, instance, **kwargs):
     cloudinary.uploader.destroy(instance.meta.avatar.public_id)
+
+
+class UserListPosts(generics.ListAPIView):
+    permission_classes = (IsAuthenticated, IsOwnerOrIsAdminOrIsFollowing)
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Post.objects.filter(user=user)
+
+
+class UserListFollowedPosts(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, IsOwnerOrIsAdminOrIsFollowingForProfile]
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = User.objects.filter(id=self.kwargs.get('pk')).first()
+        return Post.objects.filter(user=user)
 
 
 class UsersViewSet(viewsets.ModelViewSet):
