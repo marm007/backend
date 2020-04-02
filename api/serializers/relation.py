@@ -4,6 +4,7 @@ from api.models import Relation, UserMeta, User
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = UserMeta
@@ -11,6 +12,7 @@ class UserMetaSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     meta = UserMetaSerializer()
 
     class Meta:
@@ -19,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RelationSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     user = UserSerializer(read_only=True)
 
     class Meta:

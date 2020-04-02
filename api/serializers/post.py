@@ -6,6 +6,7 @@ from api.serializers.like import LikeSerializer
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = UserMeta
@@ -13,6 +14,7 @@ class UserMetaSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     meta = UserMetaSerializer()
 
     class Meta:
@@ -21,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class PostCommentSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     user = serializers.PrimaryKeyRelatedField(read_only=True)
     author_name = serializers.CharField(read_only=True)
 
@@ -30,6 +33,7 @@ class PostCommentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     user = UserSerializer(read_only=True)
     album_set = AlbumSerializer(many=True, read_only=True)
     liked = LikeSerializer(many=True, read_only=True)
@@ -42,6 +46,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostSerializerLike(serializers.ModelSerializer):
+    id = serializers.UUIDField
     user = UserSerializer(read_only=True)
     album_set = AlbumSerializer(many=True, read_only=True)
     liked = LikeSerializer(many=True, read_only=True)

@@ -1,11 +1,15 @@
+import uuid
+
 from cloudinary.models import CloudinaryField
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from model_utils.models import TimeFramedModel
 
 
 class User(AbstractUser):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     username = models.CharField(max_length=25, unique=True)
     email = models.EmailField(_('email address'), unique=True)
 
@@ -17,6 +21,7 @@ class User(AbstractUser):
 
 
 class UserMeta(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='meta')
     avatar = CloudinaryField('avatars')
@@ -27,12 +32,14 @@ class UserMeta(models.Model):
 
 
 class Album(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='album')
     photos = models.ManyToManyField('Post', blank=True)
 
 
 class Follower(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')
     user_being_followed = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
     started_following = models.DateTimeField(auto_now_add=True)
@@ -42,6 +49,7 @@ class Follower(models.Model):
 
 
 class Post(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
 
     image = CloudinaryField('posts')
@@ -52,6 +60,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     body = models.TextField()
@@ -68,6 +77,7 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='liked')
     created = models.DateTimeField(auto_now_add=True)
@@ -76,7 +86,8 @@ class Like(models.Model):
         unique_together = ('user', 'post',)
 
 
-class Relation(models.Model):
+class Relation(TimeFramedModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='relations')
     image = CloudinaryField('relations')
     created = models.DateTimeField(auto_now_add=True)

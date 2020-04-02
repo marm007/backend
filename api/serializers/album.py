@@ -4,6 +4,7 @@ from api.models import Album
 
 
 class AlbumSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     user_id = serializers.IntegerField()
 
     class Meta:

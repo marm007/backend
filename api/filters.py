@@ -51,7 +51,7 @@ class UserListFollowedRelationsFilter(django_filters.FilterSet):
 
 
 class UserListFollowedPostsFilterList(generics.ListAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     serializer_class = PostSerializer
 
     def get_queryset(self):
@@ -69,26 +69,19 @@ class UserListFollowedPostsFilterList(generics.ListAPIView):
 
 
 class UserListFollowedRelationsFilterList(generics.ListAPIView):
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsAuthenticated,)
     serializer_class = RelationSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return Relation.objects.filter(Q(user__followers__user__id=user.id) |
-                                   Q(user=user))
+        return Relation.timeframed.filter(Q(user__followers__user__id=user.id) |
+                                          Q(user=user))
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
 
     ordering_fields = ['created', ]
 
     filterset_class = UserListFollowedRelationsFilter
-
-
-
-
-
-
-
 
 #
 # class PhotoFilter(django_filters.FilterSet):

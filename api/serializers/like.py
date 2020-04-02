@@ -4,6 +4,7 @@ from api.models import Like, UserMeta, User, Post
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = UserMeta
@@ -11,6 +12,7 @@ class UserMetaSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = Post
@@ -18,6 +20,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = User
@@ -25,6 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     user = UserSerializer
 
     class Meta:

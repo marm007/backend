@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from api.models import Relation
 from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing
 from api.serializers.relation import RelationSerializer
+from datetime import datetime, timedelta
 
 
 @receiver(pre_delete, sender=Relation)
@@ -22,15 +23,16 @@ class RelationViewSet(mixins.CreateModelMixin,
                       mixins.DestroyModelMixin,
                       mixins.ListModelMixin,
                       viewsets.GenericViewSet):
-    queryset = Relation.objects.all()
+    queryset = Relation.timeframed.all()
     serializer_class = RelationSerializer
     permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user, start=datetime.now(),
+                        end=datetime.now() + timedelta(minutes=1))
 
     def list(self, request, *args, **kwargs):
-        if request.user.is_staff:
+        if not request.user.is_staff:
             queryset = self.filter_queryset(self.get_queryset())
             serializer = self.get_serializer(queryset, many=True)
             return Response(serializer.data)

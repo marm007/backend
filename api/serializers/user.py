@@ -4,6 +4,7 @@ from api.models import UserMeta, User, Like
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = UserMeta
@@ -11,6 +12,7 @@ class UserMetaSerializer(serializers.ModelSerializer):
 
 
 class UserFilterSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     meta = UserMetaSerializer()
 
     class Meta:
@@ -19,6 +21,7 @@ class UserFilterSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializerUser(serializers.ModelSerializer):
+    id = serializers.UUIDField
 
     class Meta:
         model = Like
@@ -26,6 +29,7 @@ class LikeSerializerUser(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.UUIDField
     meta = UserMetaSerializer()
     likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     relations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -66,6 +70,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserFollowSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     meta = UserMetaSerializer()
     followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     followed = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -77,6 +82,7 @@ class UserFollowSerializer(serializers.ModelSerializer):
 
 
 class UserRetrieveSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField
     meta = UserMetaSerializer()
     posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     relations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)

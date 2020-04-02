@@ -38,24 +38,23 @@ urlpatterns = [
     path('password/reset/<slug:token>/', reset_password),
     path('password/forgot/', forgot_password),
 
-    path('comments/<int:pk>/', comments_detail),
+    path('comments/<uuid:pk>/', comments_detail),
 
     path('posts/<int:pk>/comments/', comments_create),
 
-    path('followers/<int:pk>/', FollowerRetrieve.as_view()),
+    path('followers/<uuid:pk>/', FollowerRetrieve.as_view()),
 
     path('token/obtain/', jwt_views.TokenObtainPairView.as_view(), name='token_create'),  # override sjwt stock token
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('', include(router.urls)),
-
+    path('users/<uuid:pk>/posts/', UserListFollowedPosts.as_view()),
     path('users/me/posts/', UserListPosts.as_view()),
-    path('users/<int:pk>/posts/', UserListFollowedPosts.as_view()),
 
     path('users/me/followed/posts/', UserListFollowedPostsFilterList.as_view()),
     path('users/me/followed/relations/', UserListFollowedRelationsFilterList.as_view()),
 
     path('users/filter/', UsersFilterList.as_view()),
+    path('', include(router.urls)),
 
 ]
 

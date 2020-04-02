@@ -47,6 +47,8 @@ cloudinary.config(
   api_secret = "lCez9x3wtoXhQTNFdRFkAO7EWvA"
 )
 
+FRONT_URL = 'http://localhost:4200/'
+
 # Application defiadadnition
 
 INSTALLED_APPS = [
@@ -114,7 +116,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'photo-app',
         'USER': 'root',
-        'PASSWORD': 'your_password',
+        'PASSWORD': '',
         'HOST': "",
         'PORT': "",
         'OPTIONS': {

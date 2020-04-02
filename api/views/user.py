@@ -21,7 +21,8 @@ from api.permissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrRead
     IsOwnerOrIsAdminOrIsFollowing, IsOwnerOrIsAdminOrIsFollowingForProfile
 from api.serializers.post import PostSerializer
 from api.serializers.user import UserSerializer, UserFollowSerializer, UserRetrieveSerializer
-
+from backend.settings import FRONT_URL
+from django.core.mail import EmailMultiAlternatives
 
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication, ])
@@ -45,10 +46,16 @@ def forgot_password(request):
         if bool(User.objects.filter(email=email).first()):
             token = get_random_string(length=32)
             verify_link = token
+
             subject = 'Reset your password'
             from_email = 'appfoto375@gmail.com'
             to = email
-            send_mail(subject, 'localhost:4200/reset/' + verify_link + '/', from_email, [to])
+            html_content = '<a href="{}/reset/{}/">Click to reset your password</a>'.format(FRONT_URL, verify_link)
+
+            msg = EmailMultiAlternatives(subject, '', from_email, [to])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
+
             user = get_object_or_404(User, email=email)
             user.meta.reset_password_token = token
             user.meta.reset_password_expires = timezone.now() + timedelta(hours=5)
@@ -129,8 +136,15 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        print(instance)
+        print(instance.id)
         if request.user.id is not None:
-            if instance.id is request.user.id:
+            print('afsafafs')
+            print(request.user.id)
+
+            if instance.id == request.user.id:
+                print('zcxxxz')
+
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
             else:
