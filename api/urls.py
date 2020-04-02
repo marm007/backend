@@ -40,7 +40,7 @@ urlpatterns = [
 
     path('comments/<uuid:pk>/', comments_detail),
 
-    path('posts/<int:pk>/comments/', comments_create),
+    path('posts/<uuid:pk>/comments/', comments_create),
 
     path('followers/<uuid:pk>/', FollowerRetrieve.as_view()),
 

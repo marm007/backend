@@ -136,15 +136,8 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        print(instance)
-        print(instance.id)
         if request.user.id is not None:
-            print('afsafafs')
-            print(request.user.id)
-
             if instance.id == request.user.id:
-                print('zcxxxz')
-
                 serializer = self.get_serializer(instance)
                 return Response(serializer.data)
             else:
@@ -153,16 +146,6 @@ class UsersViewSet(viewsets.ModelViewSet):
         else:
             serializer = UserFollowSerializer(instance)
             return Response(serializer.data)
-
-    # @action(methods=['get'], detail=True, permission_classes=[AllowAny],
-    #         url_path='followers', url_name='get_followers_posts')
-    # def get_followers_posts(self, request, *args, **kwargs):
-    #     instance = self.get_object()
-    #     print(instance)
-    #     posts = Post.objects.fiiter(user__followers__follower__id=instance.id)
-    #
-    #     print(posts)
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated],
             url_path='follow', url_name='user_follow')

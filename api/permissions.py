@@ -36,7 +36,6 @@ class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
     message = 'Watching posts is not allowed for not followers.'
 
     def has_object_permission(self, request, view, obj):
-        print(obj)
         is_owner = request.user.id == obj.user.id
         if is_owner:
             return True

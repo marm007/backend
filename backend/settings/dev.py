@@ -116,7 +116,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'photo-app',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': 'your_password',
         'HOST': "",
         'PORT': "",
         'OPTIONS': {
