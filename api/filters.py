@@ -61,7 +61,6 @@ class UserListFollowedPostsFilterList(generics.ListAPIView):
         my_posts = Post.objects.filter(user=user)
         followed_posts = Post.objects.filter(user__followers__user__id=user.id)
         result_list = my_posts.union(followed_posts)
-        # print(Post.objects.filter(Q(user__followers__user__id=user.id) |Q(user=user)))
         return result_list
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -79,8 +78,10 @@ class UserListFollowedRelationsFilterList(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Relation.timeframed.filter(Q(user__followers__user__id=user.id) |
-                                          Q(user=user))
+        my_relations = Relation.timeframed.filter(user=user)
+        followed_relations = Relation.timeframed.filter(user__followers__user__id=user.id)
+        result_list = my_relations.union(followed_relations)
+        return result_list
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
 
