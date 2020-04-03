@@ -31,13 +31,6 @@ class UserMeta(models.Model):
     reset_password_expires = models.DateTimeField(auto_now_add=True)
 
 
-class Album(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='album')
-    photos = models.ManyToManyField('Post', blank=True)
-
-
 class Follower(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followed')

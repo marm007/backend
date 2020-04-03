@@ -1,7 +1,6 @@
 from rest_framework import serializers
 
 from api.models import Post, User, UserMeta, Comment
-from api.serializers.album import AlbumSerializer
 from api.serializers.like import LikeSerializer
 
 
@@ -36,22 +35,20 @@ class PostCommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField
     user = UserSerializer(read_only=True)
-    album_set = AlbumSerializer(many=True, read_only=True)
     liked = LikeSerializer(many=True, read_only=True)
     comments = PostCommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
         fields = ('id', 'image',
-                  'description', 'likes', 'album_set', 'liked', 'user', 'comments', 'created')
+                  'description', 'likes', 'liked', 'user', 'comments', 'created')
 
 
 class PostSerializerLike(serializers.ModelSerializer):
     id = serializers.UUIDField
     user = UserSerializer(read_only=True)
-    album_set = AlbumSerializer(many=True, read_only=True)
     liked = LikeSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
-        fields = ('id', 'image', 'description', 'likes', 'album_set', 'liked', 'user')
+        fields = ('id', 'image', 'description', 'likes', 'liked', 'user')

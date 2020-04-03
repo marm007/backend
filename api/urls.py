@@ -1,16 +1,16 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from api.filters import UsersFilterList, UserListFollowedPostsFilterList, UserListFollowedRelationsFilterList
+from api.filters import UsersFilterList
 
 from rest_framework_simplejwt import views as jwt_views
 
-from api.views.album import AlbumViewSet
 from api.views.comment import CommentViewSet
 from api.views.follower import FollowerRetrieve
 from api.views.post import PostViewSet
 from api.views.relation import RelationViewSet
-from api.views.user import UsersViewSet, reset_password, forgot_password, auth, UserListPosts, UserListFollowedPosts
+from api.views.user import UsersViewSet, reset_password, forgot_password, auth, UserListPosts, \
+    UserListFollowedPosts, UserListFollowedRelations
 
 comments_create = CommentViewSet.as_view({
     'post': 'create',
@@ -28,7 +28,6 @@ router = DefaultRouter()
 router.register(r'users', UsersViewSet)
 router.register(r'posts', PostViewSet)
 router.register(r'relations', RelationViewSet)
-router.register(r'albums', AlbumViewSet)
 
 urlpatterns = [
 
@@ -47,11 +46,11 @@ urlpatterns = [
     path('token/obtain/', jwt_views.TokenObtainPairView.as_view(), name='token_create'),  # override sjwt stock token
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('users/<uuid:pk>/posts/', UserListFollowedPosts.as_view()),
+    path('users/<uuid:pk>/posts/', UserListPosts.as_view()),
     path('users/me/posts/', UserListPosts.as_view()),
 
-    path('users/me/followed/posts/', UserListFollowedPostsFilterList.as_view()),
-    path('users/me/followed/relations/', UserListFollowedRelationsFilterList.as_view()),
+    path('users/me/followed/posts/', UserListFollowedPosts.as_view()),
+    path('users/me/followed/relations/', UserListFollowedRelations.as_view()),
 
     path('users/filter/', UsersFilterList.as_view()),
     path('', include(router.urls)),
