@@ -24,6 +24,7 @@ from api.serializers.user import UserSerializer, UserFollowSerializer, UserRetri
 from backend.settings import FRONT_URL
 from django.core.mail import EmailMultiAlternatives
 
+
 @api_view(['POST'])
 @authentication_classes([BasicAuthentication, ])
 def auth(request):
