@@ -7,6 +7,7 @@ from api.serializers.like import LikeSerializer
 
 class UserMetaSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField
+    avatar = serializers.FileField()
 
     class Meta:
         model = UserMeta

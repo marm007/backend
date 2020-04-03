@@ -5,6 +5,7 @@ from api.models import Relation, UserMeta, User
 
 class UserMetaSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField
+    avatar = serializers.FileField()
 
     class Meta:
         model = UserMeta

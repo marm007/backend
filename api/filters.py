@@ -16,7 +16,7 @@ class UserFilter(django_filters.FilterSet):
     class Meta:
         model = User
         fields = {
-            'username': ['contains', ],
+            'username': ['icontains', ],
         }
 
 
