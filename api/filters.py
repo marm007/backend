@@ -58,10 +58,11 @@ class UserListFollowedPostsFilterList(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        my_posts = Post.objects.filter(user=user)
-        followed_posts = Post.objects.filter(user__followers__user__id=user.id)
-        result_list = my_posts.union(followed_posts)
-        return result_list
+
+        my_posts = Post.objects.filter(Q(user=user) | Q(user__followers__user__id=user.id))
+        # followed_posts = Post.objects.filter(user__followers__user__id=user.id)
+        # result_list = my_posts.union(followed_posts)
+        return my_posts
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
 
