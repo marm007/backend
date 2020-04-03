@@ -29,7 +29,7 @@ class RelationViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user, start=datetime.now(),
-                        end=datetime.now() + timedelta(minutes=1))
+                        end=datetime.now() + timedelta(hours=24))
 
     def list(self, request, *args, **kwargs):
         if not request.user.is_staff:
