@@ -1,3 +1,5 @@
+from itertools import chain
+
 import django_filters
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend, filters
@@ -56,8 +58,11 @@ class UserListFollowedPostsFilterList(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        print(Post.objects.filter(Q(user=user)))
-        return Post.objects.filter(Q(user=user))
+        my_posts = Post.objects.filter(user=user)
+        followed_posts = Post.objects.filter(user__followers__user__id=user.id)
+        result_list = list(chain(my_posts, followed_posts))
+        # print(Post.objects.filter(Q(user__followers__user__id=user.id) |Q(user=user)))
+        return result_list
 
     filter_backends = [DjangoFilterBackend, OrderingFilter]
 
