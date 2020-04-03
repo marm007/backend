@@ -5,6 +5,7 @@ from api.models import UserMeta, User, Like
 
 class UserMetaSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField
+    avatar = serializers.FileField(required=False)
 
     class Meta:
         model = UserMeta
@@ -30,7 +31,7 @@ class LikeSerializerUser(serializers.ModelSerializer):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.UUIDField
-    meta = UserMetaSerializer()
+    meta = UserMetaSerializer(required=False)
     likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     relations = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -45,7 +46,10 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        meta_data = validated_data.pop('meta')
+        if validated_data.get('meta'):
+            meta_data = validated_data.pop('meta')
+        else:
+            meta_data = {}
         password = validated_data.pop('password', None)
         user = User(**validated_data)
         user.set_password(password)

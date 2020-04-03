@@ -108,7 +108,8 @@ def reset_password(request, *args, **kwargs):
 
 @receiver(pre_delete, sender=User)
 def photo_delete(sender, instance, **kwargs):
-    cloudinary.uploader.destroy(instance.meta.avatar.public_id)
+    if instance.meta.avatar:
+        cloudinary.uploader.destroy(instance.meta.avatar.public_id)
 
 
 class UserListPosts(generics.ListAPIView):
