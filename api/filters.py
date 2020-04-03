@@ -60,7 +60,7 @@ class UserListFollowedPostsFilterList(generics.ListAPIView):
         user = self.request.user
         my_posts = Post.objects.filter(user=user)
         followed_posts = Post.objects.filter(user__followers__user__id=user.id)
-        result_list = list(chain(my_posts, followed_posts))
+        result_list = my_posts.union(followed_posts)
         # print(Post.objects.filter(Q(user__followers__user__id=user.id) |Q(user=user)))
         return result_list
 
