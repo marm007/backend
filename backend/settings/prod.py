@@ -28,9 +28,10 @@ CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://marm007.github.io/frontend/', '.herokuapp.com']
 
 AUTH_USER_MODEL = 'api.User'
+
+ALLOWED_HOSTS = ['https://marm007.github.io/frontend/', '.herokuapp.com']
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -42,9 +43,9 @@ FRONT_URL = 'https://marm007.github.io/frontend'
 
 # Application defiadadnition
 
-ADMINS = (
+ADMINS = [
     ('Lego', 'marm007.photoapp@interia.pl'),
-)
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,7 +63,6 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -139,6 +139,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
