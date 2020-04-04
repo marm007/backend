@@ -10,7 +10,7 @@ from api.views.follower import FollowerRetrieve
 from api.views.post import PostViewSet
 from api.views.relation import RelationViewSet
 from api.views.user import UsersViewSet, reset_password, forgot_password, auth, UserListPosts, \
-    UserListFollowedPosts, UserListFollowedRelations
+    UserListFollowedPosts, UserListFollowedRelations, UserListPostsProfile
 
 comments_create = CommentViewSet.as_view({
     'post': 'create',
@@ -46,7 +46,7 @@ urlpatterns = [
     path('token/obtain/', jwt_views.TokenObtainPairView.as_view(), name='token_create'),  # override sjwt stock token
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('users/<uuid:pk>/posts/', UserListPosts.as_view()),
+    path('users/<uuid:pk>/posts/', UserListPostsProfile.as_view()),
     path('users/me/posts/', UserListPosts.as_view()),
 
     path('users/me/followed/posts/', UserListFollowedPosts.as_view()),

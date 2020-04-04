@@ -126,7 +126,7 @@ class UserListPosts(generics.ListAPIView):
         return Post.objects.filter(user=user)
 
 
-class UserListPosts(generics.ListAPIView):
+class UserListPostsProfile(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsOwnerOrIsAdminOrIsFollowingForProfile]
     serializer_class = PostSerializer
 
