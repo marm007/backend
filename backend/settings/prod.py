@@ -28,7 +28,7 @@ CLOUDINARY_URL = os.environ.get('CLOUDINARY_URL')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['https://marm007.github.io/frontend/']
+ALLOWED_HOSTS = ['https://marm007.github.io/frontend/', 'https://marm007-photo-app.herokuapp.com']
 
 AUTH_USER_MODEL = 'api.User'
 
@@ -72,7 +72,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ['https://marm007.github.io']
+CORS_ORIGIN_WHITELIST = ['https://marm007.github.io', 'https://marm007-photo-app.herokuapp.com']
 
 ROOT_URLCONF = 'backend.urls'
 
