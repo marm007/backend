@@ -1,4 +1,5 @@
 import cloudinary
+from django.db.models import Prefetch
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from rest_framework.decorators import action
@@ -7,9 +8,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
 
-from api.models import Post, Like
+from api.models import Post, Like, Comment
 from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing
-from api.serializers.post import PostSerializer
+from api.serializers.post import PostSerializer, CommentPostSerializer
 
 
 @receiver(pre_delete, sender=Post)

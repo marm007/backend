@@ -127,12 +127,18 @@ class UserListPosts(generics.ListAPIView):
 
 
 class UserListPostsProfile(generics.ListAPIView):
-    permission_classes = [IsAuthenticated, IsOwnerOrIsAdminOrIsFollowingForProfile]
+    permission_classes = [AllowAny, IsOwnerOrIsAdminOrIsFollowingForProfile]
     serializer_class = PostSerializer
 
     def get_queryset(self):
         user = User.objects.filter(id=self.kwargs.get('pk')).first()
         return Post.objects.filter(user=user)
+
+    filter_backends = [OrderingFilter]
+
+    ordering_fields = ['created']
+
+    ordering = ('-created',)
 
 
 class UserListFollowedPosts(generics.ListAPIView):

@@ -3,7 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.permissions import AllowAny
 
-from api.models import Post, Comment, User, Relation
+from api.models import Post, User, Relation
 
 from api.serializers.user import UserFilterSerializer
 

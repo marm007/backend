@@ -63,6 +63,9 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             meta_data = validated_data.pop('meta')
         meta = instance.meta
 
+        print(instance)
+        print(meta)
+        print(meta_data)
         if validated_data.get('password'):
             instance.set_password(validated_data.get('password'))
 
@@ -73,8 +76,11 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             instance.email = validated_data.get('email')
 
         if meta_exists:
-            meta.avatar = meta_data.get('avatar', meta.avatar)
-            meta.save()
+            if meta_data.get('avatar'):
+                meta.avatar = meta_data.get('avatar', meta.avatar)
+            if meta_data.get('is_private', None) is not None:
+                meta.is_private = meta_data.get('is_private')
+                meta.save()
 
         instance.save()
 

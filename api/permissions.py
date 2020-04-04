@@ -1,6 +1,8 @@
 from rest_framework import permissions
 from rest_framework.permissions import SAFE_METHODS
 
+from api.models import User
+
 
 def is_following(_list, _filter):
     for x in _list:
@@ -15,6 +17,9 @@ class IsOwnerOrIsAdminOrIsFollowingForProfile(permissions.BasePermission):
 
     def has_permission(self, request, view):
         pk = view.kwargs.get('pk')
+        if not User.objects.get(id=pk).meta.is_private:
+            return True
+
         if pk is None:
             return False
 
@@ -24,6 +29,7 @@ class IsOwnerOrIsAdminOrIsFollowingForProfile(permissions.BasePermission):
         else:
             if request.user.is_staff:
                 return True
+
             is_follower = is_following(request.user.followed.all(),
                                        lambda x: x.user_being_followed.id == pk)
             return is_follower

@@ -26,7 +26,7 @@ class UserMeta(models.Model):
                                 on_delete=models.CASCADE, related_name='meta')
     avatar = CloudinaryField('avatars')
 
-    is_private = models.BooleanField(default=False)
+    is_private = models.BooleanField(default=True)
     reset_password_token = models.SlugField(max_length=250, blank=True)
     reset_password_expires = models.DateTimeField(auto_now_add=True)
 
@@ -64,9 +64,6 @@ class Comment(models.Model):
 
     class Meta:
         ordering = ('created',)
-
-    def __str__(self):
-        return self.user
 
 
 class Like(models.Model):
