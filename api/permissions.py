@@ -17,23 +17,30 @@ class IsOwnerOrIsAdminOrIsFollowingForProfile(permissions.BasePermission):
 
     def has_permission(self, request, view):
         pk = view.kwargs.get('pk')
-        if not User.objects.get(id=pk).meta.is_private:
-            return True
 
         if pk is None:
             return False
-
+        print(pk)
+        print(request.user.id)
         is_owner = request.user.id == pk
-        if is_owner:
-            return True
-        else:
-            if request.user.is_staff:
+        if request.user.id is not None:
+            if is_owner:
                 return True
+            else:
+                if request.user.is_staff:
+                    return True
 
-            is_follower = is_following(request.user.followed.all(),
-                                       lambda x: x.user_being_followed.id == pk)
-            return is_follower
+                if not User.objects.get(id=pk).meta.is_private:
+                    return True
 
+                is_follower = is_following(request.user.followed.all(),
+                                           lambda x: x.user_being_followed.id == pk)
+                return is_follower
+        else:
+            if not User.objects.get(id=pk).meta.is_private:
+                return True
+            else:
+                return False
 
 class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
     """

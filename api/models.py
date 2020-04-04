@@ -24,11 +24,14 @@ class UserMeta(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(settings.AUTH_USER_MODEL,
                                 on_delete=models.CASCADE, related_name='meta')
-    avatar = CloudinaryField('avatars')
+    avatar = CloudinaryField('avatar', blank=True)
 
     is_private = models.BooleanField(default=True)
     reset_password_token = models.SlugField(max_length=250, blank=True)
     reset_password_expires = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return "{}".format(self.user.email)
 
 
 class Follower(models.Model):
@@ -45,7 +48,7 @@ class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
 
-    image = CloudinaryField('posts')
+    image = CloudinaryField('image')
     description = models.TextField()
     likes = models.PositiveIntegerField(default=0)
     created = models.DateTimeField(auto_now_add=True)
@@ -79,6 +82,6 @@ class Like(models.Model):
 class Relation(TimeFramedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='relations')
-    image = CloudinaryField('relations')
+    image = CloudinaryField('image')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)

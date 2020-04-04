@@ -11,6 +11,8 @@ from api.views.post import PostViewSet
 from api.views.relation import RelationViewSet
 from api.views.user import UsersViewSet, reset_password, forgot_password, auth, UserListPosts, \
     UserListFollowedPosts, UserListFollowedRelations, UserListPostsProfile
+from django.contrib import admin
+from rest_framework.authtoken.models import Token
 
 comments_create = CommentViewSet.as_view({
     'post': 'create',
@@ -58,3 +60,4 @@ urlpatterns = [
 ]
 
 
+admin.site.unregister(Token)
