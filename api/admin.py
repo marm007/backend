@@ -3,6 +3,33 @@ from django.contrib import admin
 from api.models import UserMeta, User, Post, Relation, Comment, Like, Follower
 from django.contrib.auth.models import Group
 
+admin.site.site_header = "PhotoApp Admin"
+admin.site.site_title = "PhotoApp Admin Portal"
+admin.site.index_title = "Welcome to PhotoApp Admin Portal "
+
+
+class CommentAdmin(admin.ModelAdmin):
+    actions = ['make_inactive', 'make_active']
+
+    def make_inactive(self, request, queryset):
+        queryset.update(active=False)
+
+    make_inactive.short_description = "Mark selected stories as unpublished"
+    make_inactive.allowed_permissions = ('change',)
+
+    def make_active(self, request, queryset):
+        queryset.update(active=True)
+
+    make_active.short_description = "Mark selected stories as published"
+    make_active.allowed_permissions = ('change',)
+
+
+class UserAdmin(admin.ModelAdmin):
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+
 admin.site.unregister(Group)
 
 
@@ -32,14 +59,14 @@ class PostAdmin(admin.ModelAdmin):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     inlines = [MetaInline, PostInline, CommentInline, RelationInline]
     list_display = ('email', 'username', 'last_name', 'first_name', 'is_staff')
 
 
 @admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'body')
+class CommentAdmin(CommentAdmin):
+    list_display = ('__str__', 'body', 'active')
 
 
 @admin.register(Like)
@@ -57,4 +84,6 @@ class FollowerAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'user')
 
 
-admin.site.register(UserMeta)
+@admin.register(UserMeta)
+class UserMetaAdmin(admin.ModelAdmin):
+    list_display = ('__str__', )
