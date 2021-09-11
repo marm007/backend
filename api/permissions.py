@@ -20,8 +20,6 @@ class IsOwnerOrIsAdminOrIsFollowingForProfile(permissions.BasePermission):
 
         if pk is None:
             return False
-        print(pk)
-        print(request.user.id)
         is_owner = request.user.id == pk
         if request.user.id is not None:
             if is_owner:
@@ -41,6 +39,7 @@ class IsOwnerOrIsAdminOrIsFollowingForProfile(permissions.BasePermission):
                 return True
             else:
                 return False
+
 
 class IsOwnerOrIsAdminOrIsFollowing(permissions.BasePermission):
     """

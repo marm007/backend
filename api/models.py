@@ -14,7 +14,7 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
+    REQUIRED_FIELDS = ['username', ]
 
     def __str__(self):
         return "{}".format(self.email)
@@ -29,6 +29,9 @@ class UserMeta(models.Model):
     is_private = models.BooleanField(default=True)
     reset_password_token = models.SlugField(max_length=250, blank=True)
     reset_password_expires = models.DateTimeField(auto_now_add=True)
+
+    activation_token = models.SlugField(max_length=250, blank=True)
+    activation_token_expires = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return "{}".format(self.user.email)

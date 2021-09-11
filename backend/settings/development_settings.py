@@ -36,8 +36,8 @@ AUTH_USER_MODEL = 'api.User'
 # CLOUDINARY_URL = 'cloudinary://637565491164232:lCez9x3wtoXhQTNFdRFkAO7EWvA@marm007-photo-app-devlopment'
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'instagramlikeapp55@gmail.com'
-EMAIL_HOST_PASSWORD = 'zti2020app'
+EMAIL_HOST_USER = 'filmapp007@gmail.com'
+EMAIL_HOST_PASSWORD = 'Marcel12#'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
@@ -63,6 +63,15 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_auth',
     'corsheaders',
+    'django_password_validators',
+    'django_password_validators.password_history',
+    'axes'
+]
+
+AUTHENTICATION_BACKENDS = [
+    'axes.backends.AxesBackend',
+    # Django ModelBackend is the default authentication backend.
+    'django.contrib.auth.backends.ModelBackend',
 ]
 
 MIDDLEWARE = [
@@ -75,14 +84,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'axes.middleware.AxesMiddleware'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:8000',
-    'http://localhost:8080',
     'http://localhost:4200',
 ]
 
@@ -107,6 +114,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+AXES_FAILURE_LIMIT = 1000
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True
+AXES_USERNAME_FORM_FIELD = "email"
+AXES_RESET_ON_SUCCESS = True
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
@@ -116,8 +128,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'photo-app',
         'USER': 'root',
-        'PASSWORD': 'your_password',
-        'HOST': "",
+        'PASSWORD': '',
+        'HOST': "127.0.0.1",
         'PORT': "",
         'OPTIONS': {
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
@@ -125,6 +137,14 @@ DATABASES = {
     }
 }
 
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+]
+
+RECAPTCHA_SECRET_KEY = '6LdleykaAAAAAIyAcsLeO0c0MvK9LW6l3G3fmx_v'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -135,12 +155,25 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {'min_length' : 8}
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+    {
+        'NAME': 'django_password_validators.password_history.password_validation.UniquePasswordsValidator',
+    },
+    {
+        'NAME': 'django_password_validators.password_character_requirements.password_validation.PasswordCharacterValidator',
+        'OPTIONS': {
+             'min_length_digit': 1,
+             'min_length_special': 1,
+             'min_length_upper': 1,
+             'special_characters': "~!@#$%^&*()_+{}\":;'[]"
+         }
     },
 ]
 
@@ -187,8 +220,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=30),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 
@@ -208,6 +241,6 @@ SIMPLE_JWT = {
     'JTI_CLAIM': 'jti',
 
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(seconds=10),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(seconds=30),
 }

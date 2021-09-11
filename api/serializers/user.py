@@ -1,6 +1,11 @@
+from django.core.mail import EmailMultiAlternatives
 from rest_framework import serializers
+from django.utils import timezone
 
 from api.models import UserMeta, User, Like
+from django.conf import settings
+from django.utils.crypto import get_random_string
+from datetime import timedelta
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
@@ -29,7 +34,7 @@ class LikeSerializerUser(serializers.ModelSerializer):
         fields = ('id',)
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField
     meta = UserMetaSerializer(required=False)
     likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
@@ -52,7 +57,24 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             meta_data = {}
         password = validated_data.pop('password', None)
         user = User(**validated_data)
+        user.is_active = False
         user.set_password(password)
+
+        token = get_random_string(length=32)
+        verify_link = token
+
+        subject = 'Activate your account'
+        from_email = 'appfoto375@gmail.com'
+        to = user.email
+        html_content = '<a href="{}/activate/{}/">Click to activate your account</a>'.format(settings.FRONT_URL, verify_link)
+
+        msg = EmailMultiAlternatives(subject, '', from_email, [to])
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+
+        meta_data["activation_token"] = token
+        date_end = timezone.now() + timezone.timedelta(hours=5)
+        meta_data["activation_token_expires"] = date_end
         user.save()
         UserMeta.objects.create(user=user, **meta_data)
         return user
@@ -63,9 +85,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             meta_data = validated_data.pop('meta')
         meta = instance.meta
 
-        print(instance)
-        print(meta)
-        print(meta_data)
         if validated_data.get('password'):
             instance.set_password(validated_data.get('password'))
 

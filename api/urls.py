@@ -9,8 +9,8 @@ from api.views.comment import CommentViewSet
 from api.views.follower import FollowerRetrieve
 from api.views.post import PostViewSet
 from api.views.relation import RelationViewSet
-from api.views.user import UsersViewSet, reset_password, forgot_password, auth, UserListPosts, \
-    UserListFollowedPosts, UserListFollowedRelations, UserListPostsProfile
+from api.views.user import UsersViewSet, reset_password, forgot_password, auth, recaptcha_validate, UserListPosts, \
+    UserListFollowedPosts, UserListFollowedRelations, UserListPostsProfile, logout, activate_account_link_clicked
 from django.contrib import admin
 from rest_framework.authtoken.models import Token
 
@@ -36,8 +36,12 @@ urlpatterns = [
 
 
     path('auth/', auth),
+    path('logout/', logout),
+    path('recaptcha_validate/', recaptcha_validate),
     path('password/reset/<slug:token>/', reset_password),
     path('password/forgot/', forgot_password),
+    path('activate/', activate_account_link_clicked),
+
 
     path('comments/<uuid:pk>/', comments_detail),
 
