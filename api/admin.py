@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from api.models import UserMeta, User, Post, Relation, Comment, Like, Follower
+from api.models import Comment, Follower, Like, Post, Relation, User, UserMeta
 from django.contrib.auth.models import Group
+
 
 admin.site.site_header = "PhotoApp Admin"
 admin.site.site_title = "PhotoApp Admin Portal"
@@ -25,10 +26,8 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-
-    def has_delete_permission(self, request, obj=None):
+   def has_delete_permission(self, request, obj=None):
         return False
-
 
 admin.site.unregister(Group)
 
@@ -49,6 +48,7 @@ class PostInline(admin.TabularInline):
     model = Post
 
 
+
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
@@ -60,6 +60,15 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(UserAdmin):
+    def save_model(self, request, obj, form, change):
+        if obj.pk:
+            orig_obj = User.objects.get(pk=obj.pk)
+            if obj.password != orig_obj.password:
+                obj.set_password(obj.password)
+        else:
+            obj.set_password(obj.password)
+        obj.save()
+
     inlines = [MetaInline, PostInline, CommentInline, RelationInline]
     list_display = ('email', 'username', 'last_name', 'first_name', 'is_staff')
 
