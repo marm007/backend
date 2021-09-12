@@ -36,8 +36,8 @@ AUTH_USER_MODEL = 'api.User'
 # CLOUDINARY_URL = 'cloudinary://637565491164232:lCez9x3wtoXhQTNFdRFkAO7EWvA@marm007-photo-app-devlopment'
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'filmapp007@gmail.com'
-EMAIL_HOST_PASSWORD = 'Marcel12#'
+EMAIL_HOST_USER = '',
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
