@@ -32,7 +32,7 @@ DEBUG = False
 
 AUTH_USER_MODEL = 'api.User'
 
-ALLOWED_HOSTS = ['https://marm007.github.io/frontend/', '.herokuapp.com']
+ALLOWED_HOSTS = ['https://marm007.github.io/photoapp-angular-frontend/', '.herokuapp.com']
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -40,7 +40,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-FRONT_URL = 'https://marm007.github.io/frontend'
+FRONT_URL = 'https://marm007.github.io/photoapp-angular-frontend'
 
 # Application defiadadnition
 
