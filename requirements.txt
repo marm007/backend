@@ -1,7 +1,7 @@
 django-axes
 requests
 django-model-utils===4.0.0
-djangorestframework_simplejwt==4.8.0
+djangorestframework_simplejwt==4.4.0
 Django==3.0.4
 django_filter==2.2.0
 pilkit==2.0
