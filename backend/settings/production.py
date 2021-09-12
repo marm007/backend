@@ -85,7 +85,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ['https://marm007.github.io', '.herokuapp.com']
+CORS_ORIGIN_WHITELIST = ['https://marm007.github.io', 'https://marm007-photoapp-django-back.herokuapp.com']
 
 ROOT_URLCONF = 'backend.urls'
 
