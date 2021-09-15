@@ -5,7 +5,6 @@ from django.utils import timezone
 from api.models import UserMeta, User, Like
 from django.conf import settings
 from django.utils.crypto import get_random_string
-from datetime import timedelta
 
 
 class UserMetaSerializer(serializers.ModelSerializer):
@@ -66,7 +65,8 @@ class UserSerializer(serializers.ModelSerializer):
         subject = 'Activate your account'
         from_email = 'appfoto375@gmail.com'
         to = user.email
-        html_content = '<a href="{}/activate/{}/">Click to activate your account</a>'.format(settings.FRONT_URL, verify_link)
+        html_content = '<a href="{}/activate/{}/">Click to activate your account</a>'.format(
+            settings.FRONT_URL, verify_link)
 
         msg = EmailMultiAlternatives(subject, '', from_email, [to])
         msg.attach_alternative(html_content, "text/html")
@@ -112,10 +112,21 @@ class UserFollowSerializer(serializers.ModelSerializer):
     followers = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     followed = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'meta', 'followers', 'followed', 'posts')
+        fields = ('id', 'username', 'first_name', 'last_name',
+                  'meta', 'followers', 'followed', 'posts', 'is_following')
+
+    def get_is_following(self, instance):
+        request = self.context.get('request')
+        if request and not request.user.is_anonymous:
+            queryset = instance.followers.filter(
+                user=self.context.get('request').user, user_being_followed=instance)
+            return bool(queryset)
+        else:
+            return False
 
 
 class UserRetrieveSerializer(serializers.ModelSerializer):

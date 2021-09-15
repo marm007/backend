@@ -28,8 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField
-    user = UserSerializer
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Like
