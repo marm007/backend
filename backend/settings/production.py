@@ -263,7 +263,7 @@ SIMPLE_JWT = {
 
 DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
-CELERY_BROKER_URL = 'amqps://zpnlxtnp:EY4FGvkZLDe-Xv9Hdz_FxYiL_KlFoMAw@cow.rmq2.cloudamqp.com/zpnlxtnp'
+CELERY_BROKER_URL = os.environ.get('CLOUD_AMQP')
 
 CELERY_BEAT_SCHEDULE = {
     "remove_old_relations_task" : {
