@@ -16,6 +16,9 @@ import os
 import django_heroku
 import dj_database_url
 
+from celery.schedules import crontab
+import backend.tasks
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -259,4 +262,14 @@ SIMPLE_JWT = {
 }
 
 DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+CELERY_BROKER_URL = 'amqps://zpnlxtnp:EY4FGvkZLDe-Xv9Hdz_FxYiL_KlFoMAw@cow.rmq2.cloudamqp.com/zpnlxtnp'
+
+CELERY_BEAT_SCHEDULE = {
+    "remove_old_relations_task" : {
+        "task": 'backend.tasks.remove_old_relations_task',
+        "schedule": crontab(minute=0, hour=3)
+    }
+}
+
 django_heroku.settings(locals())
