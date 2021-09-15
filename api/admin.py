@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from api.models import Comment, Follower, Like, Post, Relation, User, UserMeta
+from api.models import Comment, Follower, Like, Post, PostImageMeta, Relation, User, UserMeta
 from django.contrib.auth.models import Group
 
 
@@ -47,12 +47,14 @@ class RelationInline(admin.TabularInline):
 class PostInline(admin.TabularInline):
     model = Post
 
+class PostImageMetaInline(admin.TabularInline):
+    model = PostImageMeta
 
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    inlines = [CommentInline]
-    list_display = ('__str__', 'user', 'description', 'likes', 'created', 'updated')
+    inlines = [CommentInline, PostImageMetaInline]
+    list_display = ('__str__', 'user', 'image', 'description', 'likes', 'created', 'updated')
     list_filter = ('likes', 'created', 'user')
     date_hierarchy = 'created'
     ordering = ('likes', 'created')
