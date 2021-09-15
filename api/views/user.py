@@ -25,8 +25,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from api.filters import UserListFollowedPostsFilter, UserListFollowedRelationsFilter
 from api.models import User, Follower, Post, Relation
 from api.permissions import IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly, \
-    IsOwnerOrIsAdminOrIsFollowing, IsOwnerOrIsAdminOrIsFollowingForProfile
-from api.serializers.post import PostSerializer
+    IsOwnerOrIsAdminOrIsFollowing, IsOwnerOrIsAdminOrIsFollowingForProfile, is_following
+from api.serializers.post import PostProfileSerializer, PostSerializer
 from api.serializers.relation import RelationSerializer
 from api.serializers.user import UserSerializer, UserFollowSerializer, UserRetrieveSerializer
 from django.conf import settings
@@ -46,29 +46,20 @@ def raise_permission_denied(*args, **kwargs):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def auth(request):
-    print('dlaldald1asad')
-    print(request.data)
     try:
         user = request.data
-        user = authenticate(request=request, email=user.get('email'), password=user.get('password'))
-    
-        print('user')
-        print(user)
-    
+        user = authenticate(request=request, email=user.get(
+            'email'), password=user.get('password'))
+
         if user is not None:
-            print('dlaldalda')
             login(request, user)
-            print('dlaldald1a')
 
             refresh = RefreshToken.for_user(user)
-            print('dlaldald2a')
 
             serializer = UserSerializer(user)
-            print('dlaldald2a4')
-            print(refresh)
 
-            json_data = {'refresh': str(refresh), 'access': str(refresh.access_token), 'user': serializer.data, }
-            print('e213123123')
+            json_data = {'refresh': str(refresh), 'access': str(
+                refresh.access_token), 'user': serializer.data, }
 
             return Response(json_data, status=status.HTTP_200_OK)
         else:
@@ -76,8 +67,9 @@ def auth(request):
             return Response(res, status=status.HTTP_400_BAD_REQUEST)
     except Exception as err:
         print(err)
-        res = {'detail': 'Bad1 login or password'}
+        res = {'detail': 'Something went wrong!'}
         return Response(res, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, ])
@@ -156,6 +148,7 @@ def activate_account_link_clicked(request, *args, **kwargs):
         }
         return Response(res, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def forgot_password(request):
@@ -168,7 +161,8 @@ def forgot_password(request):
             subject = 'Reset your password'
             from_email = 'appfoto375@gmail.com'
             to = email
-            html_content = '<a href="{}/reset/{}/">Click to reset your password</a>'.format(settings.FRONT_URL, verify_link)
+            html_content = '<a href="{}/reset/{}/">Click to reset your password</a>'.format(
+                settings.FRONT_URL, verify_link)
 
             msg = EmailMultiAlternatives(subject, '', from_email, [to])
             msg.attach_alternative(html_content, "text/html")
@@ -241,7 +235,7 @@ class UserListPosts(generics.ListAPIView):
 
 class UserListPostsProfile(generics.ListAPIView):
     permission_classes = [AllowAny, IsOwnerOrIsAdminOrIsFollowingForProfile]
-    serializer_class = PostSerializer
+    serializer_class = PostProfileSerializer
 
     def get_queryset(self):
         user = User.objects.filter(id=self.kwargs.get('pk')).first()
@@ -257,7 +251,7 @@ class UserListPostsProfile(generics.ListAPIView):
 class UserListFollowedPosts(generics.ListAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = PostSerializer
-
+    
     def get_queryset(self):
         user = self.request.user
         return Post.objects.filter(Q(user=user) | Q(user__followers__user__id=user.id)).distinct()
@@ -289,7 +283,8 @@ class UserListFollowedRelations(generics.ListAPIView):
 class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+    permission_classes = [
+        IsCreationOrIsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
 
     def create(self, request, *args, **kwargs):
         try:
@@ -309,29 +304,30 @@ class UsersViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        if request.user.id is not None:
-            if instance.id == request.user.id:
-                serializer = self.get_serializer(instance)
-                return Response(serializer.data)
-            else:
-                serializer = UserRetrieveSerializer(instance)
-                return Response(serializer.data)
+        if instance.id == request.user.id:
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
         else:
-            serializer = UserFollowSerializer(instance)
+            serializer = UserFollowSerializer(
+                instance, context={'request': request})
             return Response(serializer.data)
 
     @action(methods=['post'], detail=True, permission_classes=[IsAuthenticated],
             url_path='follow', url_name='user_follow')
     def user_follow(self, request, *args, **kwargs):
         instance = self.get_object()
-        queryset = instance.followers.filter(user=request.user, user_being_followed=instance)
+        queryset = instance.followers.filter(
+            user=request.user, user_being_followed=instance)
         is_already_followed = bool(queryset)
         if is_already_followed:
             queryset.delete()
-            serializer = UserFollowSerializer(instance)
+            serializer = UserFollowSerializer(
+                instance, context={'request': request})
             return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
         else:
-            Follower.objects.create(user=request.user, user_being_followed=instance)
-            serializer = UserFollowSerializer(instance)
+            Follower.objects.create(
+                user=request.user, user_being_followed=instance)
+            serializer = UserFollowSerializer(
+                instance, context={'request': request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)

@@ -1,5 +1,4 @@
 import cloudinary
-from django.db.models import Prefetch
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from rest_framework.decorators import action
@@ -8,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status, viewsets, mixins
 from rest_framework.response import Response
 
-from api.models import Post, Like, Comment
+from api.models import Post, Like
 from api.permissions import IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing
 from api.serializers.post import PostSerializer, CommentPostSerializer
 
@@ -26,7 +25,8 @@ class PostViewSet(mixins.CreateModelMixin,
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-    permission_classes = [IsAuthenticated, IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing]
+    permission_classes = [IsAuthenticated,
+                          IsOwnerOrReadOnly, IsOwnerOrIsAdminOrIsFollowing]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -48,14 +48,31 @@ class PostViewSet(mixins.CreateModelMixin,
         is_already_liked = bool(queryset)
         if is_already_liked:
             queryset.delete()
-            serializer = self.get_serializer(instance, data={'likes': instance.liked.count()}, partial=True)
+            serializer = self.get_serializer(
+                instance, data={'likes': instance.liked.count()}, partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(serializer.data)
 
         else:
             Like.objects.create(post=instance, user=request.user)
-            serializer = self.get_serializer(instance, data={'likes': instance.liked.count()}, partial=True)
+            serializer = self.get_serializer(
+                instance, data={'likes': instance.liked.count()}, partial=True)
             serializer.is_valid(raise_exception=True)
             self.perform_update(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(methods=['get'], detail=True,
+            permission_classes=[IsAuthenticated,
+                                IsOwnerOrIsAdminOrIsFollowing],
+            url_path="comments_in_post", url_name="comments_in_post")
+    def comments_in_post(self, request, *args, **kwargs):
+        instance = self.get_object()
+        queryset = instance.comments.filter(active=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = CommentPostSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = CommentPostSerializer(queryset, many=True)
+        return Response(serializer.data)
