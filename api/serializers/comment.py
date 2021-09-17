@@ -1,20 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Comment, User, Post
-
-
-class PostSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField
-    class Meta:
-        model = Post
-        fields = ('id', )
-
-
-class UserSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField
-    class Meta:
-        model = User
-        fields = ('id', )
+from api.models import Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -26,4 +12,3 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'body', 'author_name', 'user', 'post')
-

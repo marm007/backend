@@ -25,6 +25,7 @@ class UsersFilterList(generics.ListAPIView):
 
 
 class UserListFollowedPostsFilter(django_filters.FilterSet):
+    created = django_filters.DateTimeFromToRangeFilter()
 
     class Meta:
         model = Post

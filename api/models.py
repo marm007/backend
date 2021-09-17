@@ -1,12 +1,15 @@
 import uuid
+import cloudinary
 
 from cloudinary.models import CloudinaryField
+from cloudinary import CloudinaryImage, CloudinaryResource
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from model_utils.models import TimeFramedModel
 from django.db.models import Q
+from pprint import pprint
 
 
 class User(AbstractUser):
@@ -19,6 +22,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return "{}".format(self.email)
+
+    def profile_posts(self):
+        return self.posts.order_by('-created')[:12]
 
 
 class UserMeta(models.Model):
@@ -49,6 +55,7 @@ class Follower(models.Model):
     class Meta:
         unique_together = ('user', 'user_being_followed',)
 
+
 class Post(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
@@ -71,13 +78,12 @@ class Post(models.Model):
         return meta
 
 
-class PostImageMeta(models.Model):
+class PostMeta(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    post = models.OneToOneField(Post, on_delete=models.CASCADE, related_name="meta")
+    post = models.OneToOneField(
+        Post, on_delete=models.CASCADE, related_name="meta")
     width = models.IntegerField()
     height = models.IntegerField()
-    url = models.TextField()
-    public_id = models.CharField(max_length=150, blank=True)
 
 
 class Comment(models.Model):
@@ -115,3 +121,18 @@ class Relation(TimeFramedModel):
     image = CloudinaryField('image')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)
+
+    def image_metadata(self):
+        try:
+            meta = self.image.metadata
+        except AttributeError:
+            meta = ''
+        return meta
+
+
+class RelationMeta(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    relation = models.OneToOneField(
+        Relation, on_delete=models.CASCADE, related_name='meta')
+    width = models.IntegerField()
+    height = models.IntegerField()

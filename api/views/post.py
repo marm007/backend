@@ -14,7 +14,8 @@ from api.serializers.post import PostSerializer, CommentPostSerializer
 
 @receiver(pre_delete, sender=Post)
 def photo_delete(sender, instance, **kwargs):
-    cloudinary.uploader.destroy(instance.image.public_id)
+    if instance.image and instance.image.public_id:
+        cloudinary.uploader.destroy(instance.image.public_id)
 
 
 class PostViewSet(mixins.CreateModelMixin,

@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.contrib.admin.options import ModelAdmin
+from django.db.models.base import Model
 
-from api.models import Comment, Follower, Like, Post, PostImageMeta, Relation, User, UserMeta
+from api.models import Comment, Follower, Like, Post, PostMeta, Relation, RelationMeta, User, UserMeta
 from django.contrib.auth.models import Group
 
 
@@ -26,8 +28,9 @@ class CommentAdmin(admin.ModelAdmin):
 
 
 class UserAdmin(admin.ModelAdmin):
-   def has_delete_permission(self, request, obj=None):
+    def has_delete_permission(self, request, obj=None):
         return False
+
 
 admin.site.unregister(Group)
 
@@ -47,14 +50,20 @@ class RelationInline(admin.TabularInline):
 class PostInline(admin.TabularInline):
     model = Post
 
-class PostImageMetaInline(admin.TabularInline):
-    model = PostImageMeta
+
+class PostMetaInline(admin.TabularInline):
+    model = PostMeta
+
+
+class RelationMetaInline(admin.TabularInline):
+    model = RelationMeta
 
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    inlines = [CommentInline, PostImageMetaInline]
-    list_display = ('__str__', 'user', 'image', 'description', 'likes', 'created', 'updated')
+    inlines = [CommentInline, PostMetaInline]
+    list_display = ('__str__', 'user', 'image', 'description',
+                    'likes', 'created', 'updated')
     list_filter = ('likes', 'created', 'user')
     date_hierarchy = 'created'
     ordering = ('likes', 'created')
@@ -87,14 +96,26 @@ class LikeAdmin(admin.ModelAdmin):
 
 @admin.register(Follower)
 class FollowerAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'user', 'user_being_followed' , 'started_following')
+    list_display = ('__str__', 'user', 'user_being_followed',
+                    'started_following')
 
 
 @admin.register(Relation)
 class FollowerAdmin(admin.ModelAdmin):
+    inlines = [RelationMetaInline, ]
     list_display = ('__str__', 'user')
 
 
 @admin.register(UserMeta)
 class UserMetaAdmin(admin.ModelAdmin):
+    list_display = ('__str__', )
+
+
+@admin.register(PostMeta)
+class PostMetaAdmin(admin.ModelAdmin):
+    list_display = ('__str__', )
+
+
+@admin.register(RelationMeta)
+class RelationMetaAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
