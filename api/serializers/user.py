@@ -167,7 +167,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             queryset = instance.followers.filter(
                 user=request.user, user_being_followed=instance)
             is_following = bool(queryset)
-            if is_following is True or instance.meta.is_private is False:
+            if is_following is True or instance.meta.is_private is False or request.user == instance:
                 posts = PostProfileSerializer(
                     instance=instance.posts.order_by('-created')[:12], many=True)
                 return posts.data
