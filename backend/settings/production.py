@@ -35,7 +35,7 @@ DEBUG = False
 
 AUTH_USER_MODEL = 'api.User'
 
-ALLOWED_HOSTS = ['https://marm007.github.io/photoapp-angular-frontend/', 'https://marm007-insta-django-backend.herokuapp.com']
+ALLOWED_HOSTS = ['https://marm007.github.io/photoapp-angular-frontend/', 'https://marm007-insta-django-backend.herokuapp.com', 'marm007-insta-django-backend.herokuapp.com']
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -88,7 +88,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = ['https://marm007.github.io', 'https://marm007-insta-django-backend.herokuapp.com']
+CORS_ORIGIN_WHITELIST = ['https://marm007.github.io', 'https://marm007-insta-django-backend.herokuapp.com', 'marm007-insta-django-backend.herokuapp.com']
 
 ROOT_URLCONF = 'backend.urls'
 
