@@ -19,5 +19,3 @@ celery==5.1.2
 psycopg2-binary==2.8.6
 psycopg2==2.8.6 
 amqp==5.0.6
-# redis==3.5.3 # development
-# mysqlclient
