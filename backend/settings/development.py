@@ -17,6 +17,9 @@ from datetime import timedelta
 
 import cloudinary
 
+from celery.schedules import crontab
+import backend.tasks
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -33,7 +36,6 @@ ALLOWED_HOSTS = []
 
 AUTH_USER_MODEL = 'api.User'
 
-# CLOUDINARY_URL = 'cloudinary://637565491164232:lCez9x3wtoXhQTNFdRFkAO7EWvA@marm007-photo-app-devlopment'
 
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = '',
@@ -46,6 +48,7 @@ cloudinary.config(
   api_key = "637565491164232",
   api_secret = "lCez9x3wtoXhQTNFdRFkAO7EWvA"
 )
+
 
 FRONT_URL = 'http://localhost:4200'
 
@@ -98,8 +101,7 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,7 +126,7 @@ AXES_RESET_ON_SUCCESS = True
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'photo-app',
         'USER': 'root',
@@ -144,7 +146,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
 
-RECAPTCHA_SECRET_KEY = '6LdleykaAAAAAIyAcsLeO0c0MvK9LW6l3G3fmx_v'
+RECAPTCHA_SECRET_KEY = '6LcAPascAAAAAHVYnjEkkz0vydFcGuBqFOUaxLFh'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -155,7 +157,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {'min_length' : 8}
+        'OPTIONS': {'min_length': 8}
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
@@ -169,11 +171,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django_password_validators.password_character_requirements.password_validation.PasswordCharacterValidator',
         'OPTIONS': {
-             'min_length_digit': 1,
-             'min_length_special': 1,
-             'min_length_upper': 1,
-             'special_characters': "~!@#$%^&*()_+{}\":;'[]"
-         }
+            'min_length_digit': 1,
+            'min_length_special': 1,
+            'min_length_upper': 1,
+            'special_characters': "~!@#$%^&*()_+{}\":;'[]"
+        }
     },
 ]
 
@@ -243,4 +245,14 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=10),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+CELERY_BEAT_SCHEDULE = {
+    "remove_old_relations_task" : {
+        "task": 'backend.tasks.remove_old_relations_task',
+        "schedule": crontab(minute=0, hour=3)
+    }
 }

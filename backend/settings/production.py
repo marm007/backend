@@ -129,7 +129,7 @@ PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
 ]
 
-RECAPTCHA_SECRET_KEY = '6LdleykaAAAAAIyAcsLeO0c0MvK9LW6l3G3fmx_v'
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY')
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
