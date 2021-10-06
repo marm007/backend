@@ -67,4 +67,3 @@ urlpatterns = [
 ]
 
 
-admin.site.unregister(Token)

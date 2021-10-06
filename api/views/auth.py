@@ -19,6 +19,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
 
 
 @receiver(user_locked_out)
@@ -128,7 +129,7 @@ def forgot_password(request):
             verify_link = token
 
             subject = 'Reset your password'
-            from_email = 'appfoto375@gmail.com'
+            from_email = settings.EMAIL_HOST_USER
             to = email
             html_content = '<a href="{}/reset/{}/">Click to reset your password</a>'.format(
                 settings.FRONT_URL, verify_link)
