@@ -54,7 +54,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
@@ -62,7 +61,8 @@ INSTALLED_APPS = [
     'cloudinary',
     'django_password_validators',
     'django_password_validators.password_history',
-    'axes'
+    'axes',
+    'api'
 ]
 
 
@@ -225,13 +225,14 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-WHITENOISE_USE_FINDERS = True
-WHITENOISE_MANIFEST_STRICT = False
-WHITENOISE_ALLOW_ALL_ORIGINS = True
+# WHITENOISE_USE_FINDERS = True
+# WHITENOISE_MANIFEST_STRICT = False
+# WHITENOISE_ALLOW_ALL_ORIGINS = True
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
@@ -280,4 +281,4 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
