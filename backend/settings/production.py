@@ -281,4 +281,4 @@ CELERY_BEAT_SCHEDULE = {
     }
 }
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
