@@ -1,11 +1,7 @@
 from django.contrib import admin
+from django.conf import settings
 
 from api.models import Comment, Follower, Like, Post, PostMeta, Relation, RelationMeta, User, UserMeta
-
-
-#site.site_header = "PhotoApp Admin"
-#site.site_title = "PhotoApp Admin Portal"
-#site.index_title = "Welcome to PhotoApp Admin Portal "
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -99,6 +95,11 @@ class RelationMetaAdmin(admin.ModelAdmin):
 from django.contrib.admin import AdminSite
 class MyAdminSite(AdminSite):
     login_template = "api/templates/admin/login.html"
+    site_title = "PhotoApp Admin Portal"
+    site_header = "PhotoApp Admin"
+    index_title = "Welcome to PhotoApp Admin Portal"
+    site_url = settings.FRONT_URL
+
 
 site = MyAdminSite()
 
