@@ -20,8 +20,9 @@ import cloudinary
 from celery.schedules import crontab
 import backend.tasks
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # it points to backend folder
 
+TEMPLATES_DIR = os.path.dirname(BASE_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -61,14 +62,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
     'corsheaders',
     'django_password_validators',
     'django_password_validators.password_history',
-    'axes'
+    'axes',
+    'api'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -101,7 +102,10 @@ ROOT_URLCONF = 'backend.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            TEMPLATES_DIR,
+            os.path.join(TEMPLATES_DIR, 'templates')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

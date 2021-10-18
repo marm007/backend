@@ -1,14 +1,11 @@
 from django.contrib import admin
-from django.contrib.admin.options import ModelAdmin
-from django.db.models.base import Model
 
 from api.models import Comment, Follower, Like, Post, PostMeta, Relation, RelationMeta, User, UserMeta
-from django.contrib.auth.models import Group
 
 
-admin.site.site_header = "PhotoApp Admin"
-admin.site.site_title = "PhotoApp Admin Portal"
-admin.site.index_title = "Welcome to PhotoApp Admin Portal "
+#site.site_header = "PhotoApp Admin"
+#site.site_title = "PhotoApp Admin Portal"
+#site.index_title = "Welcome to PhotoApp Admin Portal "
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -27,13 +24,15 @@ class CommentAdmin(admin.ModelAdmin):
     make_active.allowed_permissions = ('change',)
 
 
-class UserAdmin(admin.ModelAdmin):
+class UserAdminModel(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
+    def has_module_permission(self,request):
+        return True
 
-admin.site.unregister(Group)
-
+        
+# site.unregister(Group)
 
 class CommentInline(admin.TabularInline):
     model = Comment
@@ -58,8 +57,6 @@ class PostMetaInline(admin.TabularInline):
 class RelationMetaInline(admin.TabularInline):
     model = RelationMeta
 
-
-@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     inlines = [CommentInline, PostMetaInline]
     list_display = ('__str__', 'user', 'image', 'description',
@@ -69,8 +66,7 @@ class PostAdmin(admin.ModelAdmin):
     ordering = ('likes', 'created')
 
 
-@admin.register(User)
-class UserAdmin(UserAdmin):
+class UserAdmin(UserAdminModel):
     def save_model(self, request, obj, form, change):
         if obj.pk:
             orig_obj = User.objects.get(pk=obj.pk)
@@ -83,39 +79,41 @@ class UserAdmin(UserAdmin):
     inlines = [MetaInline, PostInline, CommentInline, RelationInline]
     list_display = ('email', 'username', 'last_name', 'first_name', 'is_staff')
 
-
-@admin.register(Comment)
 class CommentAdmin(CommentAdmin):
     list_display = ('__str__', 'body', 'active')
 
-
-@admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'user', 'post', 'created')
 
-
-@admin.register(Follower)
 class FollowerAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'user', 'user_being_followed',
                     'started_following')
 
-
-@admin.register(Relation)
-class FollowerAdmin(admin.ModelAdmin):
+class RelationAdmin(admin.ModelAdmin):
     inlines = [RelationMetaInline, ]
     list_display = ('__str__', 'user')
 
-
-@admin.register(UserMeta)
 class UserMetaAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
 
-
-@admin.register(PostMeta)
 class PostMetaAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
 
-
-@admin.register(RelationMeta)
 class RelationMetaAdmin(admin.ModelAdmin):
     list_display = ('__str__', )
+
+from django.contrib.admin import AdminSite
+class MyAdminSite(AdminSite):
+    login_template = "api/templates/admin/login.html"
+
+site = MyAdminSite()
+
+site.register(Post, PostAdmin)
+site.register(User, UserAdmin)
+site.register(Comment, CommentAdmin)
+site.register(Like, LikeAdmin)
+site.register(Follower, FollowerAdmin)
+site.register(Relation, RelationAdmin)
+site.register(UserMeta, UserMetaAdmin)
+site.register(PostMeta, PostMetaAdmin)
+site.register(RelationMeta, RelationMetaAdmin)
