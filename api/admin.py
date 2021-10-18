@@ -28,12 +28,6 @@ class UserAdminModel(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-    def has_module_permission(self,request):
-        return True
-
-        
-# site.unregister(Group)
-
 class CommentInline(admin.TabularInline):
     model = Comment
 
