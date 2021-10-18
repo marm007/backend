@@ -4,36 +4,21 @@
 {% block extrastyle %}{{ block.super }}
 <link rel="stylesheet" type="text/css" href="{% static 'admin/css/login.css'%}">
 <style>
-  body.login{
-   background-image: linear-gradient(120deg,#3498db,#8e44ad);
-}
-#header {
-	width: auto;
-	height: auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 10px 40px;
-	 background-image: linear-gradient(120deg,#3498db,#8e44ad);
-	color: #ffc;
-	overflow: hidden;
-}
-.login .submit-row {
-	clear: both;
-	padding: 1em 0 0 9.4em;
-	margin: 0;
-	border: none;
-	background: none;
-	text-align: left;
-	background-image: linear-gradient(120deg,#3498db,#8e44ad);
-}
-.button, input[type="submit"], input[type="button"], .submit-row input, a.button {
-	background: transparent;
-	padding: 10px 15px;
-	border: none;
-	border-radius: 4px;
-	color: #fff;
-	cursor: pointer;
+  #login-test-data {
+    margin-top: 5px;
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    position: relative;
+    padding: .75rem 1.25rem;
+    margin-bottom: 1rem;
+    border: 1px solid transparent;
+    border-radius: .25rem;
+  }
+
+  #login-test-data p {
+    margin: 0 0 0px;
+  }
 }
 </style>
 {{ form.media }}
@@ -95,6 +80,13 @@
     <label>&nbsp;</label><input type="submit" value="{% trans 'Log in' %}">
   </div>
 </form>
+<div id="login-test-data">
+  <p>Test login: test@admin.com</p>
+  <p>Test password: test</p>
+</div>
 
 </div>
 {% endblock %}
+
+
+
